@@ -1,5 +1,9 @@
 import React from 'react';
 
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+
 const labels = ["Strongly Does Not Describe",
                 "Does Not Describe",
                 "Somewhat Does Not Describe",
@@ -36,33 +40,43 @@ export default class LikertSort extends React.Component {
 
   statements(items){
     return <h4>{items.length}</h4>
-    return( <ul>
-      {items.map((text) => <li>{text}</li>)}
-    </ul>)
+    // return( <ul>
+    //   {items.map((text) => <li>{text}</li>)}
+    // </ul>)
   }
 
   createTable(){
     let table = []
     return (<div>
-            <button onClick={(e) => this.clear()}>Clear</button>
-            <table style={{width: "100%", table_layout: "fixed" }}>
-                <tbody>
-                  <tr>
-                    {labels.map((label, i) => (<td style={{width: (String(100/labels.length)+"%")}}
-                                                   onClick={(e) => this.assignTo(i)}>
-                                                  <h6>{label}</h6>
-                                                  <h5>{i + 1}</h5>
-                                                  {this.statements(this.state["sorted"][i])}
-                                                </td>))}
-                  </tr>
-                </tbody>
-              </table>
+          <Grid item>
+            <ButtonGroup
+              style={{ margin: "12px" }}
+              variant="contained"
+              color="primary"
+              aria-label="full-width contained primary button group"
+            >
+              {labels.map((label, i) => (<Button
+                                            style={{ width: String((100.0/labels.length)+"%") }}
+                                            onClick={(e) => this.assignTo(i)}>
+                                            {label}
+                                          </Button>))}
+
+            </ButtonGroup>
+          </Grid>
+
+
             </div>)
   }
 
   render(props){
-    return (<div style={{width: "100%"}}><p>{this.props.items[this.state['currentStatement']]}</p>
-    {this.createTable()}
-    </div>)
+    return (<div style={{width: "100%"}}>
+              <p>{this.props.items[this.state['currentStatement']]}</p>
+              {this.createTable()}
+              <Button variant="contained"
+                      color="secondary"
+                      onClick={(e) => this.clear()}>
+                Clear
+              </Button>
+            </div>)
   }
 }

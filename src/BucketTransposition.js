@@ -1,10 +1,30 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Checkbox from '@material-ui/core/Checkbox';
+
+import "./BucketTransposition.css"
 export default class BucketTransposition extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {
+      n: 3,
+      items: [
+        {label: "This one?", picked: false},
+        {label: "Second one?", picked: false},
+        {label: "Third one?", picked: false},
+        {label: "Last one?", picked: false},
+      ]
+    }
+    // bucketMerge([], props.likertResult)
   }
 
   extremes(list, qualifier){
@@ -15,13 +35,13 @@ export default class BucketTransposition extends React.Component {
 
   bucketMerge(goalDistribution, source, pickN){
     return new Promise(function(resolve, reject){
-      if(source.every((bucket) => bucket.length == 0)
-         || goalDistribution.every((goal) => goal == 0)){
+      if(source.every((bucket) => bucket.length === 0)
+         || goalDistribution.every((goal) => goal === 0)){
         // With no goal or source remaining, return the empty sink pattern
         resolve(Array.from(goalDistribution, (_) => []));
       }else {
-        const [leftGoal, rightGoal] = this.extremes(goalDistribution, (x => x != 0));
-        const [leftSource, rightSource] = this.extremes(source, ((x) => x.length != 0));
+        const [leftGoal, rightGoal] = this.extremes(goalDistribution, (x => x !== 0));
+        const [leftSource, rightSource] = this.extremes(source, ((x) => x.length !== 0));
         const leftOverflow = source[leftSource].length - goalDistribution[leftGoal];
         const rightOverflow = source[rightSource].length - goalDistribution[rightGoal];
         const pickRightmost = rightOverflow < leftOverflow && (source[rightSource].length > 0 && goalDistribution[rightGoal] > 0);
@@ -29,7 +49,7 @@ export default class BucketTransposition extends React.Component {
         const sourceIndex = pickRightmost ? rightSource:  leftSource;
         const toPick = Math.min(goalDistribution[goalIndex], source[sourceIndex].length)
 
-        const pickedResult = pickN(source[sourceIndex], toPick);
+        const pickedResult = pickN(source[sourceIndex], toPick, pickRightmost);
         pickedResult.then(function(picked){
           const afterGoal = Array.from(goalDistribution, (goal, i) => {
             return (i === goalIndex) ? goal - picked.length : goal;
@@ -54,7 +74,58 @@ export default class BucketTransposition extends React.Component {
     }.bind(this));
   }
 
+  renderPickables(items){
+
+      return items.map((item, index) => (
+          <FormControlLabel
+            control={<Checkbox
+                        checked={item.picked}
+                        onChange={() => {
+                          this.setState((state, props) => {
+                            state.items[index].picked = !state.items[index].picked
+                            return state;
+                          })
+                        }}
+                        value={index} />}
+            label={item.label}
+          />) )
+
+      return (<ul>
+                {items.map((item, index) => (<div>
+                                        <ToggleButton
+                                          value="check"
+                                          variant="outlined"
+                                          color="primary"
+                                          selected={item.picked}>
+                                          {item.label}
+                                        </ToggleButton>
+
+                                      </div>))}
+              </ul>)
+  }
+
   render(props){
-    return (<div >  </div>)
+    return (<div>
+              <h1></h1>
+
+              <FormControl required
+              // error={error}
+              component="fieldset"
+              //className={classes.formControl}
+              >
+                <FormLabel component="legend">Pick The {this.state.n} Most Descriptive Statements</FormLabel>
+                  <FormGroup>
+                    {this.renderPickables(this.state.items)}
+                  </FormGroup>
+                <FormHelperText>{"Select "+this.state.n+" and only "+this.state.n}</FormHelperText>
+              </FormControl>
+
+              <br/>
+              <Button variant="contained"
+                      color="primary"
+                      disabled={(this.state.n !== this.state.items.filter((x) => x.picked).length)}>
+                Save
+              </Button>
+            </div>)
   }
 }

@@ -16,7 +16,7 @@ it('renders without crashing', () => {
 });
 
 
-const pickN = (list, toPick) => {
+const pickN = (list, toPick, pickRightmost) => {
   // Dummy implimentation that gives the first items
   return new Promise((resolve, _) => resolve(list.slice(0, toPick)));
 }

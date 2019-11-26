@@ -1,17 +1,19 @@
 import React from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import './App.css';
 import LikertSort from './LikertSort.js';
-import {inventory, distribution} from './inventory'
-
-function random_item(xs) { return xs[Math.floor(Math.random()*xs.length)]; }
+import BucketTransposition from './BucketTransposition.js'
+import {inventory} from './inventory'
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>California Q Sort</h1>
-        <LikertSort items={inventory}/>
       </header>
+      <LikertSort items={inventory.slice(0,9)}/>
+      <BucketTransposition />
     </div>
   );
 }
