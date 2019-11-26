@@ -8,10 +8,11 @@ import Adapter from 'enzyme-adapter-react-16';
 configure({ adapter: new Adapter() });
 
 import BucketTransposition from './BucketTransposition';
+import {bucketMerge} from './BucketTransposition';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<BucketTransposition />, div);
+  ReactDOM.render(<BucketTransposition statements={["a", "b", "c", "d"]} n={3}/>, div);
   ReactDOM.unmountComponentAtNode(div);
 });
 
@@ -22,8 +23,7 @@ const pickN = (list, toPick, pickRightmost) => {
 }
 
 it("Sorts from a single bucket", () =>{
-  const wrapper = shallow(<BucketTransposition  />);
-  const sorted = wrapper.instance().bucketMerge([1,2,1],[["a", "b", "c", "d"]], pickN);
+  const sorted = bucketMerge([1,2,1],[["a", "b", "c", "d"]], pickN);
   sorted.then(result => expect( [
                                   [["a"],["b", "c"], ["d"]],
                                   [["a"],["c", "b"], ["d"]]
@@ -32,8 +32,7 @@ it("Sorts from a single bucket", () =>{
 });
 
 it("Sorts from a singleton buckets", () =>{
-  const wrapper = shallow(<BucketTransposition  />);
-  const sorted = wrapper.instance().bucketMerge([1,2,1],[["a"], [], ["b"], [], ["c"], ["d"]], pickN);
+  const sorted = bucketMerge([1,2,1],[["a"], [], ["b"], [], ["c"], ["d"]], pickN);
   sorted.then(result => expect( [
                                   [["a"],["b", "c"], ["d"]],
                                   [["a"],["c", "b"], ["d"]]

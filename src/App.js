@@ -13,7 +13,7 @@ function App() {
         <h1>California Q Sort</h1>
       </header>
       <LikertSort items={inventory.slice(0,9)}/>
-      <BucketTransposition />
+      <BucketTransposition n={3} statements={inventory.slice(0,9)} />
     </div>
   );
 }
