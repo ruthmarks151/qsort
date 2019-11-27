@@ -67,25 +67,44 @@ function renderPickables(items, pick){
                       value={index} />}
           label={item.label}
         />) )
-
-    return (<ul>
-              {items.map((item, index) => (<div>
-                                      <ToggleButton
-                                        value="check"
-                                        variant="outlined"
-                                        color="primary"
-                                        selected={item.picked}>
-                                        {item.label}
-                                      </ToggleButton>
-
-                                    </div>))}
-            </ul>)
 }
 
 function BucketTransposition(props){
 
-  const defaultStatements = () => props.statements.map((s) => ({label: s, picked: false, key: s}));
-  const [statements, setStatements] = useState(defaultStatements());
+  const defaultStatements = (s) => s.map((s) => ({label: s, picked: false, key: s}));
+  const [statements, setStatements] = useState(null);
+  const [n, setN] = useState(null);
+  const [pickMost, setPickMost] = useState(null);
+  const [onSave, setOnSave] = useState(() => {})
+
+  const [result, setResult] = useState(null)
+
+  if(n == null
+    && statements == null
+    && pickMost == null
+    && props.goalDistribution != null
+    && props.source != null){
+    bucketMerge(props.goalDistribution,
+                props.source,
+                (list, toPick, pickRightmost) => {
+                  if (toPick == list.length){
+                    return new Promise((resolve, _) => resolve(list))
+                  } else {
+                  setStatements(defaultStatements(list));
+                  setN(toPick);
+                  setPickMost(pickRightmost);
+
+                  return new Promise((resolve, _) =>
+                  setOnSave(() => (
+                   (picked) => { resolve(picked) }
+                  ))
+                )
+              }
+              }).then((res) => {props.onComplete(res)});
+                return <h1>Loading</h1>
+  }else if (n == null || statements == null || pickMost == null) {
+     return <h1>Loading</h1>
+  }
 
   return (<div>
             <h1></h1>
@@ -95,20 +114,24 @@ function BucketTransposition(props){
             component="fieldset"
             //className={classes.formControl}
             >
-              <FormLabel component="legend">Pick The {props.n} Most Descriptive Statements</FormLabel>
+              <FormLabel component="legend">Pick The {n} {pickMost ? "Most" : "Least"} Descriptive Statements</FormLabel>
                 <FormGroup>
                   {renderPickables(statements, (clickedItem) => {
                     statements[clickedItem].picked = !statements[clickedItem].picked
                     setStatements([...statements])
                   })}
                 </FormGroup>
-              <FormHelperText>{"Select "+props.n+" and only "+props.n}</FormHelperText>
+              <FormHelperText>{"Select "+n+" and only "+n}</FormHelperText>
             </FormControl>
 
             <br/>
             <Button variant="contained"
                     color="primary"
-                    disabled={(props.n !== statements.filter((x) => x.picked).length)}>
+                    disabled={(n !== statements.filter((x) => x.picked).length)}
+                    onClick={(e) => {
+                      const clicked = statements.filter((s) => s.picked).map((s) => s.label);
+                      onSave(clicked)
+                    }}>
               Save
             </Button>
           </div>)

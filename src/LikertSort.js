@@ -57,8 +57,13 @@ function LikertSort(props){
   return (<div style={{width: "100%"}}>
             <p>{props.items[currentStatement]}</p>
             {createTable(clickedLikert => {
-              setSortedStatements(assignToLikert(sortedStatements,props.items[currentStatement],clickedLikert));
-              setCurrentStatement(currentStatement + 1);
+              const updatedSortedStatements = assignToLikert(sortedStatements,props.items[currentStatement],clickedLikert)
+              if((currentStatement + 1) >= props.items.length){
+                props.onComplete(updatedSortedStatements)
+              }else {
+                setSortedStatements(updatedSortedStatements);
+                setCurrentStatement(currentStatement + 1);
+              }
             })}
             <Button variant="contained"
                     color="secondary"
