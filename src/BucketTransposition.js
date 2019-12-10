@@ -90,15 +90,24 @@ function BucketTransposition(props){
                   if (toPick == list.length){
                     return new Promise((resolve, _) => resolve(list))
                   } else {
-                  setStatements(defaultStatements(list));
-                  setN(toPick);
-                  setPickMost(pickRightmost);
+                    setStatements(defaultStatements(list));
+                    if (list.length < (2 * toPick)){
+                      setN(list.length - toPick);
+                      setPickMost(!pickRightmost);
+                      return new Promise((resolve, _) =>
+                      setOnSave(() => (
+                       (picked) => { list.filter(value => picked.indexOf(value) === -1);}
+                     )));
+                    } else {
+                      setN(toPick);
+                      setPickMost(pickRightmost);
 
-                  return new Promise((resolve, _) =>
-                  setOnSave(() => (
-                   (picked) => { resolve(picked) }
-                  ))
-                )
+                      return new Promise((resolve, _) =>
+                      setOnSave(() => (
+                       (picked) => { resolve(picked) }
+                      ))
+                    )
+                  }
               }
               }).then((res) => {props.onComplete(res)});
                 return <h1>Loading</h1>

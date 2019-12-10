@@ -27,24 +27,26 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function not(a: number[], b: number[]) {
+function not<T>(a: T[], b: T[]) {
   return a.filter(value => b.indexOf(value) === -1);
 }
 
-function intersection(a: number[], b: number[]) {
+function intersection<T>(a: T[], b: T[]) {
   return a.filter(value => b.indexOf(value) !== -1);
 }
 
-export default function BucketAnnealer(props) {
+export interface BucketAnnealerProps { sort: string[][]; onComplete: ((_:string[][]) => void); }
+
+export default function BucketAnnealer(props: BucketAnnealerProps) {
   const classes = useStyles();
-  const [checked, setChecked] = React.useState([]);
-  const [sort, setSort]  = React.useState(props.sort)
-  const [index, setIndex] = React.useState(0)
+  const [checked, setChecked] = React.useState<string[]>([]);
+  const [sort, setSort]  = React.useState<string[][]>(props.sort)
+  const [index, setIndex] = React.useState<number>(0)
 
-  const leftChecked = intersection(checked, sort[index]);
-  const rightChecked = intersection(checked, sort[index + 1]);
+  const leftChecked = intersection<string>(checked, sort[index]);
+  const rightChecked = intersection<string>(checked, sort[index + 1]);
 
-  const handleToggle = (value: number) => () => {
+  const handleToggle = (value: string) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
@@ -72,14 +74,14 @@ export default function BucketAnnealer(props) {
     const newRight = not(sort[index + 1], rightChecked).concat(leftChecked);
     const newSort = [...sort.slice(0,index),newLeft,newRight,...sort.slice(index + 2)];
 
-    setSort(newSort)
+    setSort(newSort);
     setChecked([]);
   };
 
-  const customList = (items) => (
+  const customList = (items: string[]) => (
     <Paper className={classes.paper}>
       <List dense component="div" role="list">
-        {items.map((value: number) => {
+        {items.map((value: string) => {
           const labelId = `transfer-list-item-${value}-label`;
 
           return (
