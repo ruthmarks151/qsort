@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Plot from 'react-plotly.js';
 import {factorMap} from './inventory'
 import {SortType, StatementString} from "./types/SortType";
-import {Indicies, Sort} from "./types/Sort";
+import {Indicies, Sort, sortName} from "./types/Sort";
 
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
 
@@ -56,16 +56,16 @@ export default function Analysis(props: AnalysisProps) {
     const comparisonArray = shape.reduce((arr, _, i) => [...arr, props.comparisonSort.result[String(i) as Indicies]], [] as StatementString[][]);
 
     //props.set2.reverse()
-    const rank1 = toRankMap(primaryArray);
-    const rank2 = toRankMap(comparisonArray);
+    const primaryRank = toRankMap(primaryArray);
+    const comparisonRank = toRankMap(comparisonArray);
 
     const movingTerms = inventory.slice();
 
-    movingTerms.sort((a, b) => (Math.abs(Math.abs(rank1[a] - rank2[a]) - Math.abs(rank1[b] - rank2[b]))));
+    movingTerms.sort((a, b) => (Math.abs(Math.abs(primaryRank[a] - comparisonRank[a]) - Math.abs(primaryRank[b] - comparisonRank[b]))));
 
     var trace1 = {
-        x: inventory.map((k) => rank2[k]) as number[],
-        y: inventory.map((k) => rank1[k]) as number[],
+        x: inventory.map((k) => comparisonRank[k]) as number[],
+        y: inventory.map((k) => primaryRank[k]) as number[],
         mode: 'markers' as "markers" | "lines+markers",
         type: "scatter" as "scatter" | "bar",
         name: 'Statements',
@@ -85,23 +85,31 @@ export default function Analysis(props: AnalysisProps) {
         width: 1000,
         height: 800,
         xaxis: {
-            label: "Ideal Rating",
+            label: sortName(props.comparisonSort),
+            title: sortName(props.comparisonSort),
             range: [-5, 5]
         },
         yaxis: {
-            label: "Self Rating",
+            label: sortName(props.primarySort),
+            title: sortName(props.primarySort),
             range: [-5, 5]
         },
         title: 'Congruence Plot'
     };
     const factors = (inventory.length == 50 ? [
-            <p>{JSON.stringify(applyFactors(inventory, rank1))}</p>,
-            <p>{JSON.stringify(applyFactors(inventory, rank2))}</p>]
+            <p>{JSON.stringify(applyFactors(inventory, primaryRank))}</p>,
+            <p>{JSON.stringify(applyFactors(inventory, comparisonRank))}</p>]
         : (<p>No Correllation</p>))
     return (<div>
         <p>Correlation between sets is {correlation(inventory, primaryArray, comparisonArray)}</p>
-        <h6>List items by degree of incongruence:</h6>
-        <ul>{movingTerms.map(s => <li>{s}</li>)}</ul>
+        <h3>List items by degree of incongruence:</h3>
+        <ul style={{
+            width: 400,
+            margin: 'auto',
+            textAlign: 'left'
+        }}>
+            {movingTerms.slice(0, 10).map(s => <li>{s}</li>)}
+        </ul>
 
         {factors}
 

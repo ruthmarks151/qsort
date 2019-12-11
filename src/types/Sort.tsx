@@ -44,7 +44,6 @@ export function listenForSortsByType(sortTypeId: string, onUpdate: (_: Sort[]) =
     return (databaseRef.collection("sorts")
         .where("sort", "==", sortTypeRef(sortTypeId))
         .onSnapshot(function (querySnapshot) {
-            debugger
             var sorts: Sort[] = [];
             querySnapshot.forEach(function (doc) {
                 var s = doc.data();
@@ -55,17 +54,34 @@ export function listenForSortsByType(sortTypeId: string, onUpdate: (_: Sort[]) =
         }));
 }
 
-export function pushSort(sort: Sort, onId: (_: string) => void) {
+export function getSort(id: string, storeFunction: (_: Sort | null) => void): void {
+    databaseRef.collection("sorts").doc(id).get().then((doc) => {
+        if (doc.exists) {
+            var d = doc.data() as Sort;
+            d.id = doc.id;
+            storeFunction(d);
+        } else {
+            storeFunction(null);
+        }
+    }).catch(function (error) {
+        console.log("Error getting document:", error);
+    });
+}
+
+export function pushSort(sort: Sort, onComplete: (_: Sort) => void) {
     // Add a new document with a generated id.
     databaseRef.collection("sorts").add(sort)
-        .then(function (docRef) {
-            onId(docRef.id);
-        })
-        .catch(function (error) {
-            console.error("Error adding document: ", error);
-        });
+        .then((ref) => ref.get()
+            .then(function (doc) {
+                var d = doc.data() as Sort;
+                d.id = doc.id;
+                onComplete(d);
+            })
+            .catch(function (error) {
+                console.error("Error adding document: ", error);
+            }));
 }
 
 export function sortName(s: Sort): string {
-    return s.sort.id + " by " + s.sortedBy + " as a " + s.sortClass + " on " + s.sortedOn.toDate().toDateString();
+    return s.sortClass + " by " + s.sortedBy + " on " + s.sortedOn.toDate().toDateString() + " using " + s.sort.id;
 }

@@ -11,7 +11,7 @@ import {SortType, listenForSortTypes, StatementString} from "./types/SortType";
 import {listenForSortsByType, Sort, sortName} from "./types/Sort";
 import {useEffect} from "react";
 
-const useStyles = makeStyles((theme: Theme) =>
+export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         formControl: {
             margin: theme.spacing(1),
