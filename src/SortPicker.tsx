@@ -7,8 +7,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
 import {databaseRef} from "./firebase";
-import {SortType, getSortTypes, StatementString} from "./types/SortType";
-import {getSortsOfType, Sort, sortName} from "./types/Sort";
+import {SortType, listenForSortTypes, StatementString} from "./types/SortType";
+import {listenForSortsByType, Sort, sortName} from "./types/Sort";
+import {useEffect} from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -28,33 +29,36 @@ export default function SortPicker(inProps: { onSortsSelected: (primarySortId: s
 
     const inputLabel = React.useRef<HTMLLabelElement>(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
-    const [unsubscribe, setUnsubscribe] = React.useState<() => void>(() => (() => {
-    }));
+    const [unsubscribe, setUnsubscribe] = React.useState<() => void>(() => (() => {}));
 
     // Dropdown options
     const [sortTypes, setSortTypes] = React.useState<SortType[]>([]);
     const [sorts, setSorts] = React.useState<Sort[]>([]);
 
     // Selected items
-    const [sortType, setSortType] = React.useState('');
+    const [sortType, setSortType] = React.useState<string>('');
     const [primarySort, setPrimarySort] = React.useState<string>("new");
     const [comparisonSort, setComparisonSort] = React.useState<string>("none");
 
     React.useEffect(() => {
         // setLabelWidth(inputLabel.current!.offsetWidth);
-        getSortTypes().then((sortTypes: SortType[]) => setSortTypes(sortTypes))
+        listenForSortTypes((sortTypes: SortType[]) => setSortTypes(sortTypes));
     }, []);
+
+    React.useEffect(() => {
+        if (sortType !== '')
+            return listenForSortsByType(sortType, setSorts)
+    }, [sortType]);
 
     const onChangedSortType = (event: React.ChangeEvent<{ value: unknown }>) => {
         const sortTypeId = event.target.value as string;
-        if(sortTypeId == sortType) {
+        if(sortTypeId === sortType) {
             return;
         }
         setSortType(sortTypeId);
         setPrimarySort("new");
         setComparisonSort("none");
         props.onSortTypeSelected(sortTypeId);
-        getSortsOfType(event.target.value as string).then(setSorts);
     };
 
     return (

@@ -52,8 +52,8 @@ export default function Analysis(props: AnalysisProps) {
     const inventory: StatementString[] = props.sortType.statements.map(s => s.statement);
 
     const shape = props.sortType.distribution;
-    const primaryArray = shape.reduce((arr, _, i) => [...arr, props.primarySort.result[i as Indicies]], [] as StatementString[][] );
-    const comparisonArray = shape.reduce((arr, _, i) => [...arr, props.comparisonSort.result[i as Indicies]], [] as StatementString[][]);
+    const primaryArray = shape.reduce((arr, _, i) => [...arr, props.primarySort.result[String(i) as Indicies]], [] as StatementString[][] );
+    const comparisonArray = shape.reduce((arr, _, i) => [...arr, props.comparisonSort.result[String(i) as Indicies]], [] as StatementString[][]);
 
     //props.set2.reverse()
     const rank1 = toRankMap(primaryArray);

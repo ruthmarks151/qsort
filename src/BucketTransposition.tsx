@@ -9,18 +9,20 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
+import {SortType, StatementString} from "./types/SortType";
 
 
-function extremes(list, qualifier){
-  const leftIndex = list.findIndex(qualifier)
-  const rightIndex = list.length - ( list.slice().reverse().findIndex(qualifier) + 1 )
-  return [leftIndex, rightIndex]
+function extremes<T>(list: T[], qualifier: (_:T) => boolean): [number, number]{
+  const leftIndex = list.findIndex(qualifier);
+  const rightIndex = list.length - ( list.slice().reverse().findIndex(qualifier) + 1 );
+  return [leftIndex, rightIndex];
 }
 
-function bucketMerge(goalDistribution, source, pickN){
-  return new Promise(function(resolve, reject){
-    if(source.every((bucket) => bucket.length === 0)
-       || goalDistribution.every((goal) => goal === 0)){
+type pickNFunction = (list: StatementString[], toPick:number ,pickRightmost:boolean) => Promise<StatementString[]>
+
+function bucketMerge(goalDistribution: number[], source: StatementString[][], pickN: pickNFunction): Promise<StatementString[][]>{
+  return new Promise(function(resolve: (_:StatementString[][]) => void, reject: (_:any) => void){
+    if(source.every((bucket) => bucket.length === 0) || goalDistribution.every((goal) => goal === 0)){
       // With no goal or source remaining, return the empty sink pattern
       resolve(Array.from(goalDistribution, (_) => []));
     }else {
@@ -34,13 +36,13 @@ function bucketMerge(goalDistribution, source, pickN){
       const toPick = Math.min(goalDistribution[goalIndex], source[sourceIndex].length)
 
       const pickedResult = pickN(source[sourceIndex], toPick, pickRightmost);
-      pickedResult.then(function(picked){
+      pickedResult.then(function(picked: StatementString[]){
         const afterGoal = Array.from(goalDistribution, (goal, i) => {
           return (i === goalIndex) ? goal - picked.length : goal;
-        })
+        });
         const afterSource = Array.from(source, (items, i) => {
           return (i === sourceIndex) ? items.filter(item => !picked.includes(item)) : items;
-        })
+        });
 
         if(goalDistribution.reduce((a, b) => a + b, 0) === afterGoal.reduce((a, b) => a + b, 0)){
           reject(new Error("Invalid step, no progress made"))
@@ -52,13 +54,19 @@ function bucketMerge(goalDistribution, source, pickN){
             return (i === goalIndex) ? [...list, ...picked] : list;
           }))
           }, err => reject(err));
-        }.bind(this),
+        },
         err => reject(err));
       }
-  }.bind(this));
+  });
 }
 
-function renderPickables(items, pick){
+interface PickableItem {
+    label: string;
+    picked: boolean;
+    key: string
+}
+
+function renderPickables(items: PickableItem[], pick: (_:number) => void): JSX.Element[]{
     return items.map((item, index) => (
         <FormControlLabel
           control={<Checkbox
@@ -69,25 +77,31 @@ function renderPickables(items, pick){
         />) )
 }
 
-function BucketTransposition(props){
+export interface BucketTranspositionProps {
+    sortType: SortType;
+    source: StatementString[][];
+    onComplete: (_:StatementString[][]) => void;
+}
 
-  const defaultStatements = (s) => s.map((s) => ({label: s, picked: false, key: s}));
-  const [statements, setStatements] = useState(null);
-  const [n, setN] = useState(null);
-  const [pickMost, setPickMost] = useState(null);
-  const [onSave, setOnSave] = useState(() => {})
+function BucketTransposition(props: BucketTranspositionProps){
 
-  const [result, setResult] = useState(null)
+  const defaultStatements: (_:string[]) => PickableItem[] = (s: string[]) => s.map((s: string) => ({label: s, picked: false, key: s} as PickableItem));
+  const [statements, setStatements] = useState<PickableItem[] | null>(null);
+  const [n, setN] = useState<number | null>(null);
+  const [pickMost, setPickMost] = useState<boolean | null>(null);
+  const [onSave, setOnSave] = useState<(_:StatementString[]) => void>((x) => {});
+
+  const [result, setResult] = useState(null);
 
   if(n == null
     && statements == null
     && pickMost == null
-    && props.goalDistribution != null
+    && props.sortType != null
     && props.source != null){
-    bucketMerge(props.goalDistribution,
+    bucketMerge(props.sortType.distribution,
                 props.source,
                 (list, toPick, pickRightmost) => {
-                  if (toPick == list.length){
+                  if (toPick === list.length){
                     return new Promise((resolve, _) => resolve(list))
                   } else {
                     setStatements(defaultStatements(list));
@@ -96,15 +110,14 @@ function BucketTransposition(props){
                       setPickMost(!pickRightmost);
                       return new Promise((resolve, _) =>
                       setOnSave(() => (
-                       (picked) => { list.filter(value => picked.indexOf(value) === -1);}
+                       (picked: StatementString[]) => { resolve(list.filter(value => picked.indexOf(value) === -1));}
                      )));
                     } else {
                       setN(toPick);
                       setPickMost(pickRightmost);
-
                       return new Promise((resolve, _) =>
                       setOnSave(() => (
-                       (picked) => { resolve(picked) }
+                       (picked: StatementString[]) => { resolve(picked) }
                       ))
                     )
                   }

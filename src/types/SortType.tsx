@@ -1,4 +1,5 @@
 import {databaseRef} from "../firebase";
+import {Sort} from "./Sort";
 
 export interface Factor {
     name: string
@@ -19,19 +20,15 @@ export interface SortType {
     statements: Statement[]
 }
 
-export function getSortTypes(): Promise<Array<SortType>>{
-    return new Promise<Array<SortType>>(function(resolve, reject) {
-        databaseRef.collection("sortTypes")
-            .get().then(function (querySnapshot) {
+export function listenForSortTypes(onUpdate: (_: SortType[]) => void): () => void {
+    return databaseRef.collection("sortTypes")
+        .onSnapshot(function (querySnapshot) {
             var sortTypes: SortType[] = [];
             querySnapshot.forEach(function (doc) {
                 var st = doc.data();
                 st.id = doc.id;
                 sortTypes.push(st as SortType);
             });
-            resolve(sortTypes)
-        }).catch(function(error) {
-            reject(error);
-        });
-    });
+            onUpdate(sortTypes)
+        })
 }

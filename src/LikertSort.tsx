@@ -28,7 +28,7 @@ function statements(items: string[]): JSX.Element {
     // </ul>)
 }
 
-function createTable(assignStatementToLikert: (_: number) => void) {
+function createTable(assignStatementToLikert: (_: number) => void): JSX.Element {
     let table = []
     return (<div>
         <Grid item>
@@ -56,7 +56,7 @@ export interface LikertSortProps {
     sortType: SortType;
 }
 
-function LikertSort(props: LikertSortProps) {
+function LikertSort(props: LikertSortProps): JSX.Element {
     const defaultCurrentStatement: () => number = () => 0;
     const [currentStatement, setCurrentStatement] = useState<number>(defaultCurrentStatement());
     const defaultSortedStatements: () => StatementString[][] = () => labels.map((_:string) => []);
