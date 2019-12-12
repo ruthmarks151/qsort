@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import Plot from 'react-plotly.js';
+import Plot, {PlotParams} from 'react-plotly.js';
 import {factorMap} from './inventory'
 import {SortType, StatementString} from "./types/SortType";
 import {Indicies, Sort, sortName} from "./types/Sort";
 
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
+const rankOptions: Rank[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
 
 function toRankMap(a_list: StatementString[][]): { [key: string]: Rank; }{
     return a_list.reduce(function (obj, traits, index) {
@@ -38,6 +39,65 @@ function applyFactors(keys: StatementString[], rank: { [key: string]: number;}):
         "Emotional Stability": raw["4"],
         "Intellect/Imagination": raw["5"]
     }
+}
+
+function produceSankey(inventory: StatementString[], primaryRank: { [key: string]: Rank; }, comparisonRank: { [key: string]: Rank; }) {
+    interface SankeyFlow {
+        from: number,
+        to: number,
+        count: number,
+        label: string
+    }
+
+    const sankeyFlows = rankOptions.reduce(function (list, primaryRankVal) {
+            return [...list,
+                ...rankOptions.reduce(function (flows, comparisonRankVal) {
+                    const matches = inventory.filter((s) => primaryRank[s] === primaryRankVal && comparisonRank[s] === comparisonRankVal);
+                    return [...flows, {
+                        from: primaryRankVal + 4,
+                        to: comparisonRankVal + 13,
+                        count: matches.length,
+                        label: matches.join("\n")
+                    } as SankeyFlow]
+                }, [] as SankeyFlow[])]
+        }
+        , [] as SankeyFlow[]).filter(flow => flow.count !== 0 && flow.from !== (flow.to -9));
+
+    const data = {
+        type: "sankey",
+        orientation: "h",
+        node: {
+            pad: 15,
+            thickness: 30,
+            line: {
+                color: "black",
+                width: 0.5
+            },
+            label: [...rankOptions.map(r => "Primary " + r), ...rankOptions.map(r => "Comparison " + r)],
+            color: [...rankOptions, ...rankOptions].map(_ => "blue")
+        },
+
+        link: {
+            source: sankeyFlows.map( s => s.from),
+            target: sankeyFlows.map( s => s.to),
+            value:  sankeyFlows.map( s => s.count),
+            label: sankeyFlows.map( s => s.label)
+        }
+    };
+
+    const dataArr = [data];
+
+    const layout = {
+        title: "Movement Between Sorts",
+        font: {
+            size: 10
+        },
+        width: 1000,
+        height: 1200,
+    };
+
+    // @ts-ignore
+    return <Plot data={dataArr} layout={layout}/>
 }
 
 export {correlation}
@@ -89,6 +149,7 @@ export default function Analysis(props: AnalysisProps) {
         })}
     </div>;
 
+    const sankey = produceSankey(inventory, primaryRank, comparisonRank);
 
     const movingTerms = inventory.slice();
 
@@ -139,6 +200,8 @@ export default function Analysis(props: AnalysisProps) {
         {factors}
 
         <Plot data={data} layout={layout}/>
+
+        {sankey}
     </div>)
 
 }
