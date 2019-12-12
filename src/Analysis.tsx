@@ -59,6 +59,37 @@ export default function Analysis(props: AnalysisProps) {
     const primaryRank = toRankMap(primaryArray);
     const comparisonRank = toRankMap(comparisonArray);
 
+    const rois: {[key: string]: [number, number]} = {
+        "Descriptive in both sorts": [4,4],
+        "Not Descriptive in both sorts": [-4, -4],
+        "Descriptive in primary sort but not comparison sort": [-4, 4],
+        "Descriptive in comparison sort but not primary sort": [4, -4],
+        "Boring statements": [0, 0]
+    };
+
+    const distance = ([x1,y1]: [number | Rank, number | Rank], [x2, y2]: [number | Rank, number | Rank]): number => {
+        return ((x1 -x2) * (x1 -x2) + (y1 - y2 * (y1 - y2)));
+    }
+    const statementToPoint = (s:StatementString): [number, number] => [comparisonRank[s], primaryRank[s]];
+
+    const statementBlocks = <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+        {Object.keys(rois).map(function (statement, index) {
+            const p = rois[statement];
+            const statements = inventory.slice();
+            statements.sort((a, b) => (distance(p, statementToPoint(a)) - distance(p, statementToPoint(b))))
+            return <div style={{flexBasis: "30%", margin: "auto"}}>
+                <h3>{statement}</h3>
+                <ul style={{
+                    margin: 'auto',
+                    textAlign: 'left'
+                }}>
+                    {statements.slice(0, 10).map(s => <li>{s}</li>)}
+                </ul>
+            </div>
+        })}
+    </div>;
+
+
     const movingTerms = inventory.slice();
 
     movingTerms.sort((a, b) => (Math.abs(Math.abs(primaryRank[a] - comparisonRank[a]) - Math.abs(primaryRank[b] - comparisonRank[b]))));
@@ -102,14 +133,8 @@ export default function Analysis(props: AnalysisProps) {
         : (<p>No Correllation</p>))
     return (<div>
         <p>Correlation between sets is {correlation(inventory, primaryArray, comparisonArray)}</p>
-        <h3>List items by degree of incongruence:</h3>
-        <ul style={{
-            width: 400,
-            margin: 'auto',
-            textAlign: 'left'
-        }}>
-            {movingTerms.slice(0, 10).map(s => <li>{s}</li>)}
-        </ul>
+
+        {statementBlocks}
 
         {factors}
 

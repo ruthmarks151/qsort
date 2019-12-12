@@ -58,7 +58,11 @@ export default function SortPicker(props: {}) {
         }
         sortSelectionContext.setPrimarySort(null);
         sortSelectionContext.setComparisonSort(null);
-        getSortType(sortTypeId, sortSelectionContext.setSortType);
+        if(newSortTypeId !== ''){
+            getSortType(newSortTypeId, sortSelectionContext.setSortType);
+        } else {
+            sortSelectionContext.setSortType(null)
+        }
     };
 
     return (
