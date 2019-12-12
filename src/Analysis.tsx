@@ -133,12 +133,34 @@ export default function Analysis(props: AnalysisProps) {
     }
     const statementToPoint = (s:StatementString): [number, number] => [comparisonRank[s], primaryRank[s]];
 
+
+    const movingTerms = inventory.slice();
+    movingTerms.sort((a, b) => (Math.abs(primaryRank[b] - comparisonRank[b]) - Math.abs(primaryRank[a] - comparisonRank[a])));
+    // const differenceString = (s:StatementString): string => ("("+primaryRank[s] +" -> " + comparisonRank[s] +") ")
+    const differenceString = (s:StatementString): string => {
+        const delta = comparisonRank[s] - primaryRank[s];
+        return Math.abs(delta) + (delta > 0 ? "↗ " : "↘ ")
+    };
+
+    const blockStyle = {flexBasis: "30%", margin: "8px auto auto auto"};
     const statementBlocks = <div style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+        <div style={blockStyle}>
+            <h3>Significant Movers (3 or More Groupings)</h3>
+            <ul style={{
+                margin: 'auto',
+                textAlign: 'left',
+                listStyleType: "none"
+            }}>
+                {movingTerms
+                    .filter(s => Math.abs(comparisonRank[s] - primaryRank[s]) >=3 )
+                    .map( s => <li><b>{differenceString(s)}</b> {s}</li>)}
+            </ul>
+        </div>
         {Object.keys(rois).map(function (statement, index) {
             const p = rois[statement];
             const statements = inventory.slice();
             statements.sort((a, b) => (distance(p, statementToPoint(a)) - distance(p, statementToPoint(b))))
-            return <div style={{flexBasis: "30%", margin: "auto"}}>
+            return <div style={blockStyle}>
                 <h3>{statement}</h3>
                 <ul style={{
                     margin: 'auto',
@@ -151,10 +173,6 @@ export default function Analysis(props: AnalysisProps) {
     </div>;
 
     const sankey = produceSankey(inventory, primaryRank, comparisonRank);
-
-    const movingTerms = inventory.slice();
-
-    movingTerms.sort((a, b) => (Math.abs(Math.abs(primaryRank[a] - comparisonRank[a]) - Math.abs(primaryRank[b] - comparisonRank[b]))));
 
     var trace1 = {
         x: inventory.map((k) => comparisonRank[k]) as number[],
