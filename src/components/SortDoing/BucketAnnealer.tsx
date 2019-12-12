@@ -100,34 +100,36 @@ export default function BucketAnnealer(props: BucketAnnealerProps) {
     </Paper>
   );
 
-  return (
-    <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-      <Grid item>{customList(sort[index])}</Grid>
-      <Grid item>
-        <Grid container direction="column" alignItems="center">
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            onClick={swap}
-            disabled={leftChecked.length !== rightChecked.length || rightChecked.length == 0}
-            aria-label="swap selected items"
-          >
-           <SwapHorizIcon/>
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            onClick={(e) => done()}
-            aria-label="save selections"
-          >
-           <DoneIcon/>
-          </Button>
+    return (<div>
+        <h3>Step 3: Check your work and swap statements such that the statements on the right all better describe the
+            subject of the sort better than the statements on the left</h3>
+        <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
+            <Grid item>{customList(sort[index])}</Grid>
+            <Grid item>
+                <Grid container direction="column" alignItems="center">
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        className={classes.button}
+                        onClick={swap}
+                        disabled={leftChecked.length !== rightChecked.length || rightChecked.length == 0}
+                        aria-label="swap selected items"
+                    >
+                        <SwapHorizIcon/>
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        className={classes.button}
+                        onClick={(e) => done()}
+                        aria-label="save selections"
+                    >
+                        <DoneIcon/>
+                    </Button>
 
+                </Grid>
+            </Grid>
+            <Grid item>{customList(sort[index + 1])}</Grid>
         </Grid>
-      </Grid>
-      <Grid item>{customList(sort[index + 1])}</Grid>
-    </Grid>
-  );
+    </div>);
 }

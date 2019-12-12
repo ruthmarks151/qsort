@@ -65,6 +65,7 @@ function LikertSort(props: LikertSortProps): JSX.Element {
     const items = props.sortType.statements.map(s => s.statement);
 
     return (<div style={{width: "100%"}}>
+        <h3>Step 1: Select to what degree the following statement applies to the subject of the sort</h3>
         <p>{items[currentStatement]}</p>
         {createTable(clickedLikert => {
             const updatedSortedStatements = assignToLikert(sortedStatements, items[currentStatement], clickedLikert)

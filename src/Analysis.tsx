@@ -3,6 +3,7 @@ import Plot, {PlotParams} from 'react-plotly.js';
 import {factorMap} from './inventory'
 import {SortType, StatementString} from "./types/SortType";
 import {Indicies, Sort, sortName} from "./types/Sort";
+import {Layout} from "plotly.js";
 
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
 const rankOptions: Rank[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
@@ -186,6 +187,7 @@ export default function Analysis(props: AnalysisProps) {
             title: sortName(props.primarySort),
             range: [-5, 5]
         },
+        hovermode: 'closest',
         title: 'Congruence Plot'
     };
     const factors = (inventory.length == 50 ? [
@@ -199,6 +201,7 @@ export default function Analysis(props: AnalysisProps) {
 
         {factors}
 
+        // @ts-ignore
         <Plot data={data} layout={layout}/>
 
         {sankey}

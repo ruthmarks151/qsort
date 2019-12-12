@@ -127,23 +127,22 @@ function BucketTransposition(props: BucketTranspositionProps){
   }else if (n == null || statements == null || pickMost == null) {
      return <h1>Loading</h1>
   }
-
+    const pickstatementsedSoFar = statements.filter(s => s.picked).length;
   return (<div>
-            <h1></h1>
-
+      <h3>Step 2: Select the {n} items that <i>{pickMost ? "most" : "least"}</i> describe the subject of the sort </h3>
             <FormControl required
             // error={error}
             component="fieldset"
             //className={classes.formControl}
             >
-              <FormLabel component="legend">Pick The {n} {pickMost ? "Most" : "Least"} Descriptive Statements</FormLabel>
+              <FormLabel component="legend">Pick { n - pickstatementsedSoFar} more</FormLabel>
                 <FormGroup>
                   {renderPickables(statements, (clickedItem) => {
-                    statements[clickedItem].picked = !statements[clickedItem].picked
+                    statements[clickedItem].picked = !statements[clickedItem].picked;
                     setStatements([...statements])
                   })}
                 </FormGroup>
-              <FormHelperText>{"Select "+n+" and only "+n}</FormHelperText>
+              <FormHelperText>{"Selected "+pickstatementsedSoFar+" of "+n}</FormHelperText>
             </FormControl>
 
             <br/>

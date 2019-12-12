@@ -64,7 +64,7 @@ export function DoSort(props: DoSortProps) {
                 return <h3>Ready for comparison</h3>
             }
         } else {
-            return <h3>Select a comparison sort</h3>
+            return <h3>Step 4: Select a comparison sort</h3>
         }
     } else {
         return <h3>Select a sort type</h3>
