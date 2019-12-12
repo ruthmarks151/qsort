@@ -9,7 +9,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
-import {SortType, StatementString} from "./types/SortType";
+import {SortType, StatementString} from "../../types/SortType";
 
 
 function extremes<T>(list: T[], qualifier: (_:T) => boolean): [number, number]{

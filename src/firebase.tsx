@@ -15,6 +15,6 @@ firebase.initializeApp(firebaseConfig);
 
 
 const databaseRef = firebase.firestore();
-const Timestamp = firebase.firestore.Timestamp
+const Timestamp = firebase.firestore.Timestamp;
 
 export {databaseRef, Timestamp};

@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import './App.css';
 
-import Body from './Body'
+import Body from './components/Body'
 
 
-function App() {
+function App(): JSX.Element {
   return (
     <div className="App">
       <header className="App-header">

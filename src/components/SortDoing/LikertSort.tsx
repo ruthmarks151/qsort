@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import {SortType, StatementString} from "./types/SortType";
+import {SortType, StatementString} from "../../types/SortType";
 
 const labels: string[] = [
     "Strongly Does Not Describe",

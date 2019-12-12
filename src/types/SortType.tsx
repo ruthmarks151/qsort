@@ -32,3 +32,18 @@ export function listenForSortTypes(onUpdate: (_: SortType[]) => void): () => voi
             onUpdate(sortTypes)
         })
 }
+
+export function getSortType(sortTypeId: string, onSortType: (_:SortType | null) => void):void {
+    databaseRef.collection("sortTypes").doc(sortTypeId).get().then((doc) => {
+        if (doc.exists) {
+            var d = doc.data() as SortType;
+            d.id = doc.id;
+            onSortType(d);
+        } else {
+            onSortType(null);
+        }
+    }).catch(function (error) {
+        console.log("Error getting document:", error);
+    });
+
+}

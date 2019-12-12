@@ -6,10 +6,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-import {databaseRef} from "./firebase";
-import {SortType, listenForSortTypes, StatementString} from "./types/SortType";
-import {listenForSortsByType, Sort, sortName} from "./types/Sort";
+import {databaseRef} from "../../firebase";
+import {SortType, listenForSortTypes, StatementString, getSortType} from "../../types/SortType";
+import {getSort, listenForSortsByType, Sort, sortName} from "../../types/Sort";
 import {useEffect} from "react";
+import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 
 export const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -23,22 +24,22 @@ export const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function SortPicker(inProps: { onSortsSelected: (primarySortId: string, comparisonSortId: string) => void, onSortTypeSelected: (sortTypeId: string) => void}) {
-    const props = inProps;
+export default function SortPicker(props: {}) {
+    const sortSelectionContext = React.useContext<ISortSelectionContext>(SortSelectionContext);
+
     const classes = useStyles();
 
     const inputLabel = React.useRef<HTMLLabelElement>(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
-    const [unsubscribe, setUnsubscribe] = React.useState<() => void>(() => (() => {}));
 
     // Dropdown options
     const [sortTypes, setSortTypes] = React.useState<SortType[]>([]);
     const [sorts, setSorts] = React.useState<Sort[]>([]);
 
     // Selected items
-    const [sortType, setSortType] = React.useState<string>('');
-    const [primarySort, setPrimarySort] = React.useState<string>("new");
-    const [comparisonSort, setComparisonSort] = React.useState<string>("none");
+    const sortTypeId = sortSelectionContext.sortType != null ? sortSelectionContext.sortType.id : '';
+    const primarySortId = sortSelectionContext.primarySort != null ? sortSelectionContext.primarySort.id : "new";
+    const comparisonSortId = sortSelectionContext.comparisonSort != null ? sortSelectionContext.comparisonSort.id : "none";
 
     React.useEffect(() => {
         // setLabelWidth(inputLabel.current!.offsetWidth);
@@ -46,19 +47,18 @@ export default function SortPicker(inProps: { onSortsSelected: (primarySortId: s
     }, []);
 
     React.useEffect(() => {
-        if (sortType !== '')
-            return listenForSortsByType(sortType, setSorts)
-    }, [sortType]);
+        if (sortTypeId !== '')
+            return listenForSortsByType(sortTypeId, setSorts)
+    }, [sortTypeId]);
 
     const onChangedSortType = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const sortTypeId = event.target.value as string;
-        if(sortTypeId === sortType) {
+        const newSortTypeId = event.target.value as string;
+        if(newSortTypeId === sortTypeId) {
             return;
         }
-        setSortType(sortTypeId);
-        setPrimarySort("new");
-        setComparisonSort("none");
-        props.onSortTypeSelected(sortTypeId);
+        sortSelectionContext.setPrimarySort(null);
+        sortSelectionContext.setComparisonSort(null);
+        getSortType(sortTypeId, sortSelectionContext.setSortType);
     };
 
     return (
@@ -68,7 +68,7 @@ export default function SortPicker(inProps: { onSortsSelected: (primarySortId: s
                 <Select
                     labelId="sort-type-select-label"
                     id="sort-type-select"
-                    value={sortType}
+                    value={sortTypeId}
                     onChange={onChangedSortType}>
                     <MenuItem value="">
                         <em>None</em>
@@ -83,10 +83,9 @@ export default function SortPicker(inProps: { onSortsSelected: (primarySortId: s
                 <Select
                     labelId="sort1-select-label"
                     id="sort1-type-select"
-                    value={primarySort}
+                    value={primarySortId}
                     onChange={event => {
-                        setPrimarySort(event.target.value as string);
-                        props.onSortsSelected(event.target.value as string, comparisonSort);
+                        getSort(event.target.value as string, sortSelectionContext.setPrimarySort);
                     }}>
                     <MenuItem value="new">
                         <em>New Sort</em>
@@ -101,10 +100,9 @@ export default function SortPicker(inProps: { onSortsSelected: (primarySortId: s
                 <Select
                     labelId="sort2-select-label"
                     id="sort2-type-select"
-                    value={comparisonSort}
+                    value={comparisonSortId}
                     onChange={event => {
-                        setComparisonSort(event.target.value as string);
-                        props.onSortsSelected(primarySort, event.target.value as string);
+                        getSort(event.target.value as string, sortSelectionContext.setComparisonSort);
                     }}>
                     <MenuItem value="none">
                         <em>None</em>
