@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 import {StatementString} from "../../types/SortType";
 import BucketAnnealer from "./BucketAnnealer";
-import {asSortMapping, Indicies, pushSort, Sort} from "../../types/Sort";
+import {asSortMapping, PileId, pushSort, Sort} from "../../types/Sort";
 import {Timestamp} from "../../firebase";
 import BucketTransposition from "./BucketTransposition";
 import LikertSort from "./LikertSort";
@@ -51,8 +51,8 @@ export function DoSort(props: DoSortProps) {
             }
         } else if (comparisonSort != null) {
             const shape = sortType.distribution;
-            const primaryArray = shape.reduce((arr, _, i) => [...arr, primarySort.group(i as Indicies)], [] as StatementString[][]);
-            const comparisonArray = shape.reduce((arr, _, i) => [...arr, comparisonSort.group(i as Indicies)], [] as StatementString[][]);
+            const primaryArray = shape.reduce((arr, _, i) => [...arr, primarySort.group(i as PileId)], [] as StatementString[][]);
+            const comparisonArray = shape.reduce((arr, _, i) => [...arr, comparisonSort.group(i as PileId)], [] as StatementString[][]);
 
             const primaryFits = shape.reduce((fits, fitLen, i) => fits && fitLen === primaryArray[i].length, true);
             const comparisonFits = shape.reduce((fits, fitLen, i) => fits && fitLen === comparisonArray[i].length, true);

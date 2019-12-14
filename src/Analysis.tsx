@@ -2,7 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import {factorMap} from './inventory'
 import {SortType, StatementString} from "./types/SortType";
-import {Indicies, Sort} from "./types/Sort";
+import {PileId, Sort} from "./types/Sort";
 
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
 const rankOptions: Rank[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
@@ -112,8 +112,8 @@ export default function Analysis(props: AnalysisProps) {
     const inventory: StatementString[] = props.sortType.statements.map(s => s.statement);
 
     const shape = props.sortType.distribution;
-    const primaryArray = shape.reduce((arr, _, i) => [...arr, props.primarySort.group(i as Indicies)], [] as StatementString[][] );
-    const comparisonArray = shape.reduce((arr, _, i) => [...arr, props.comparisonSort.group(i as Indicies)], [] as StatementString[][]);
+    const primaryArray = shape.reduce((arr, _, i) => [...arr, props.primarySort.group(i as PileId)], [] as StatementString[][] );
+    const comparisonArray = shape.reduce((arr, _, i) => [...arr, props.comparisonSort.group(i as PileId)], [] as StatementString[][]);
 
     //props.set2.reverse()
     const primaryRank = toRankMap(primaryArray);

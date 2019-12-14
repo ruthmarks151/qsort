@@ -3,7 +3,10 @@ import {Record} from "immutable";
 
 type DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
+// Factor - Map
+// An analytic factor computed by a sort of a given SortType i.e.: Big 5 Factors
 export class Factor extends Record({
+    // Canonical Fields
     name: undefined as unknown as string
 }){
     constructor(props: {name: string | undefined}) {
@@ -12,9 +15,12 @@ export class Factor extends Record({
     }
 }
 
+// Statement - Map
+// A statement in a SortType
 export class Statement extends Record({
-    statement: undefined as unknown as string,
-    factors:  undefined as unknown as number[]
+    // Canonical Fields
+    statement: undefined as unknown as string, // The statement as presented to the user
+    factors:  undefined as unknown as number[] // An array of coeffecients corresponding to the list
 }){
     constructor(props: {statement: string | undefined, factors: number[] | undefined}) {
         if (props.statement === undefined) throw Error("No statement string provided to Statement");
@@ -32,12 +38,18 @@ export interface SortTypeObj {
     statements: Statement[]
 }
 
+// SortType - Document
+// A type of Q Sort that can be performed
 export class SortType extends Record({
-    id: undefined as unknown as string,
+    id: undefined as unknown as string, // DocumentID as represented in the DB
     distribution: undefined as unknown as number[],
-    factors: undefined as unknown as Factor[],
-    name: undefined as unknown as string,
-    statements: undefined as unknown as Statement[]
+    // The number of cards in each "pile" in the sort.
+    // distribution[0] -> The least representative of the subject
+    // distribution[distribution.length] -> The most representative of the subject
+
+    factors: undefined as unknown as Factor[], // The factors calculated by this SortType
+    name: undefined as unknown as string, // The name of the SortType
+    statements: undefined as unknown as Statement[] // The statements in the SortType as Statements
 }){
     constructor(vals: any) {
         super(vals);

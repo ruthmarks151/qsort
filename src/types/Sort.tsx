@@ -10,8 +10,11 @@ type DocumentReference = firebase.firestore.DocumentReference;
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
 export const rankOptions: Rank[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
 
-export type Indicies = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
-export type SortMapping = Map<Indicies, StatementString[]>;
+export type PileId = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export const pileIds = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+// SortMapping - The result of a sorting
+export type SortMapping = Map<PileId, StatementString[]>;
 
 export interface SortObj {
     note: string,
@@ -22,14 +25,16 @@ export interface SortObj {
     sortedOn: any
 }
 
+// Sort - Document
+// The result of one Q Sort by a user
 export class Sort extends Record({
-    id: undefined as unknown as string,
-    note: undefined as unknown as string,
-    result: undefined as unknown as SortMapping,
-    sortTypeId: undefined  as unknown as string,
-    sortClass: undefined as unknown as string,
-    sortedBy: undefined as unknown as string,
-    sortedOn: undefined as unknown as any
+    id: undefined as unknown as string, // DB ID
+    note: undefined as unknown as string, // Note about the sort
+    result: undefined as unknown as SortMapping, // The result of the sort
+    sortTypeId: undefined  as unknown as string, // ID of the SortType
+    sortClass: undefined as unknown as string, // A description of the sort class
+    sortedBy: undefined as unknown as string, // The sorter
+    sortedOn: undefined as unknown as any // The date of the sort
 }, "Sort"){
 
     constructor(vals: any) {
@@ -71,8 +76,8 @@ export class Sort extends Record({
         return `${this.sortClass} by ${this.sortedBy} on ${this.sortedOn.toDate().toDateString()} using ${this.sortTypeId}`;
     }
 
-    group(i: Indicies): StatementString[]{
-        const starements = this.result.get(i as Indicies);
+    group(i: PileId): StatementString[]{
+        const starements = this.result.get(i as PileId);
         if (starements === undefined){
             throw(Error("Key Error"))
         }
@@ -82,8 +87,8 @@ export class Sort extends Record({
 
 export function asSortMapping(x: StatementString[][]): SortMapping {
     return x.reduce(function (prev: SortMapping, current: StatementString[], i: number) {
-        return prev.set(i as Indicies, current);
-    }, Map<Indicies, StatementString[]>()) as SortMapping
+        return prev.set(i as PileId, current);
+    }, Map<PileId, StatementString[]>()) as SortMapping
 }
 
 const sortTypeRef = (sortTypeId: string): DocumentReference => {
