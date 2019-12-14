@@ -1,5 +1,5 @@
 import {databaseRef} from "../firebase";
-import {Sort} from "./Sort";
+import {SortObj} from "./Sort";
 
 export interface Factor {
     name: string

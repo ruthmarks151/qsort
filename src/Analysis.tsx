@@ -196,13 +196,13 @@ export default function Analysis(props: AnalysisProps) {
         width: 1000,
         height: 800,
         xaxis: {
-            label: sortName(props.comparisonSort),
-            title: sortName(props.comparisonSort),
+            label: props.comparisonSort.name(),
+            title: props.comparisonSort.name(),
             range: [-5, 5]
         },
         yaxis: {
-            label: sortName(props.primarySort),
-            title: sortName(props.primarySort),
+            label: props.primarySort.name(),
+            title: props.primarySort.name(),
             range: [-5, 5]
         },
         hovermode: 'closest',

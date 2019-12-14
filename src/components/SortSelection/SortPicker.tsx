@@ -94,7 +94,7 @@ export default function SortPicker(props: {}) {
                     <MenuItem value="new">
                         <em>New Sort</em>
                     </MenuItem>
-                    {sorts.map((st: Sort) => <MenuItem value={st.id}>{sortName(st)}</MenuItem>)}
+                    {sorts.map((st: Sort) => <MenuItem value={st.id}>{st.name()}</MenuItem>)}
                 </Select>
                 <FormHelperText>Select the intial sort</FormHelperText>
             </FormControl>
