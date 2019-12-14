@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
-import Plot, {PlotParams} from 'react-plotly.js';
+import React from 'react';
+import Plot from 'react-plotly.js';
 import {factorMap} from './inventory'
 import {SortType, StatementString} from "./types/SortType";
-import {Indicies, Sort, sortName} from "./types/Sort";
-import {Layout} from "plotly.js";
+import {Indicies, Sort} from "./types/Sort";
 
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
 const rankOptions: Rank[] = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
@@ -113,8 +112,8 @@ export default function Analysis(props: AnalysisProps) {
     const inventory: StatementString[] = props.sortType.statements.map(s => s.statement);
 
     const shape = props.sortType.distribution;
-    const primaryArray = shape.reduce((arr, _, i) => [...arr, props.primarySort.result[String(i) as Indicies]], [] as StatementString[][] );
-    const comparisonArray = shape.reduce((arr, _, i) => [...arr, props.comparisonSort.result[String(i) as Indicies]], [] as StatementString[][]);
+    const primaryArray = shape.reduce((arr, _, i) => [...arr, props.primarySort.group(i as Indicies)], [] as StatementString[][] );
+    const comparisonArray = shape.reduce((arr, _, i) => [...arr, props.comparisonSort.group(i as Indicies)], [] as StatementString[][]);
 
     //props.set2.reverse()
     const primaryRank = toRankMap(primaryArray);
@@ -130,7 +129,8 @@ export default function Analysis(props: AnalysisProps) {
 
     const distance = ([x1,y1]: [number | Rank, number | Rank], [x2, y2]: [number | Rank, number | Rank]): number => {
         return ((x1 -x2) * (x1 -x2) + (y1 - y2 * (y1 - y2)));
-    }
+    };
+
     const statementToPoint = (s:StatementString): [number, number] => [comparisonRank[s], primaryRank[s]];
 
 

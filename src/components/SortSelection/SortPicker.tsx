@@ -6,10 +6,8 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-import {databaseRef} from "../../firebase";
-import {SortType, listenForSortTypes, StatementString, getSortType} from "../../types/SortType";
-import {getSort, listenForSortsByType, Sort, sortName} from "../../types/Sort";
-import {useEffect} from "react";
+import {SortType, listenForSortTypes, getSortType} from "../../types/SortType";
+import {getSort, listenForSortsByType, Sort} from "../../types/Sort";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 
 export const useStyles = makeStyles((theme: Theme) =>
@@ -111,7 +109,7 @@ export default function SortPicker(props: {}) {
                     <MenuItem value="none">
                         <em>None</em>
                     </MenuItem>
-                    {sorts.map((st: Sort) => <MenuItem value={st.id}>{sortName(st)}</MenuItem>)}
+                    {sorts.map((st: Sort) => <MenuItem value={st.id}>{st.name()}</MenuItem>)}
                 </Select>
                 <FormHelperText>Select a sort to compare with</FormHelperText>
             </FormControl>
