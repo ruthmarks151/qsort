@@ -2,13 +2,217 @@ import {databaseRef, Timestamp} from "./firebase";
 
 debugger
 
+export function uploadIasr(){
+databaseRef.doc("sortTypes/iasr_64").set({
+    name: "",
+    factors: [],
+    distribution: [4, 6, 8, 9, 10, 9, 8, 6, 4],
+    statements: [
+        {
+            "statement": "Self-Assured",
+            "factors": []
+        },{
+            "statement": "Self-Confident",
+            "factors": []
+        },{
+            "statement": "Assertive",
+            "factors": []
+        },{
+            "statement": "Persistent",
+            "factors": []
+        },{
+            "statement": "Firm",
+            "factors": []
+        },{
+            "statement": "Dominant",
+            "factors": []
+        },{
+            "statement": "Forceful",
+            "factors": []
+        },{
+            "statement": "Domineering",
+            "factors": []
+        },{
+            "statement": "Cocky",
+            "factors": []
+        },{
+            "statement": "Crafty",
+            "factors": []
+        },{
+            "statement": "Cunning",
+            "factors": []
+        },{
+            "statement": "Boastful",
+            "factors": []
+        },{
+            "statement": "Wily",
+            "factors": []
+        },{
+            "statement": "Calculating",
+            "factors": []
+        },{
+            "statement": "Tricky",
+            "factors": []
+        },{
+            "statement": "Silly",
+            "factors": []
+        },{
+            "statement": "Ruthless",
+            "factors": []
+        },{
+            "statement": "Ironhearted",
+            "factors": []
+        },{
+            "statement": "Hardhearted",
+            "factors": []
+        },{
+            "statement": "Uncharitable",
+            "factors": []
+        },{
+            "statement": "Coldhearted",
+            "factors": []
+        },{
+            "statement": "Cruel",
+            "factors": []
+        },{
+            "statement": "Unsympathetic",
+            "factors": []
+        },{
+            "statement": "Warmthless",
+            "factors": []
+        },{
+            "statement": "Uncheary",
+            "factors": []
+        },{
+            "statement": "Unneighbourly",
+            "factors": []
+        },{
+            "statement": "Distatnt",
+            "factors": []
+        },{
+            "statement": "Dissocial",
+            "factors": []
+        },{
+            "statement": "Unsociable",
+            "factors": []
+        },{
+            "statement": "Antisocial",
+            "factors": []
+        },{
+            "statement": "Unsparkling",
+            "factors": []
+        },{
+            "statement": "Introverted",
+            "factors": []
+        },{
+            "statement": "Timid",
+            "factors": []
+        },{
+            "statement": "Bashful",
+            "factors": []
+        },{
+            "statement": "Shy",
+            "factors": []
+        },{
+            "statement": "Meek",
+            "factors": []
+        },{
+            "statement": "Forceless",
+            "factors": []
+        },{
+            "statement": "Unauthoritative",
+            "factors": []
+        },{
+            "statement": "Unbold",
+            "factors": []
+        },{
+            "statement": "Unaggressive",
+            "factors": []
+        },{
+            "statement": "Unargumentative",
+            "factors": []
+        },{
+            "statement": "Undemanding",
+            "factors": []
+        },{
+            "statement": "Uncalculating",
+            "factors": []
+        },{
+            "statement": "Uncrafty",
+            "factors": []
+        },{
+            "statement": "Boastless",
+            "factors": []
+        },{
+            "statement": "Unwily",
+            "factors": []
+        },{
+            "statement": "Uncunning",
+            "factors": []
+        },{
+            "statement": "Unsly",
+            "factors": []
+        },{
+            "statement": "Softhearted",
+            "factors": []
+        },{
+            "statement": "Accomodating",
+            "factors": []
+        },{
+            "statement": "Gentlehearted",
+            "factors": []
+        },{
+            "statement": "Tenderhearted",
+            "factors": []
+        },{
+            "statement": "Charitable",
+            "factors": []
+        },{
+            "statement": "Tender",
+            "factors": []
+        },{
+            "statement": "Sympathetic",
+            "factors": []
+        },{
+            "statement": "Kind",
+            "factors": []
+        },{
+            "statement": "Cheerful",
+            "factors": []
+        },{
+            "statement": "Friendly",
+            "factors": []
+        },{
+            "statement": "Neighbourly",
+            "factors": []
+        },{
+            "statement": "Jovial",
+            "factors": []
+        },{
+            "statement": "Perky",
+            "factors": []
+        },{
+            "statement": "Enthusiastic",
+            "factors": []
+        },{
+            "statement": "Outgoing",
+            "factors": []
+        },{
+            "statement": "Extraverted",
+            "factors": []
+        }
+    ]
+});
+}
+
 function pushSortTypes(){
     databaseRef.doc("sortTypes/california_100")
         .set({
             name: "100-item California Q-Sort",
             factors: [],
             distribution: [5, 8, 12, 16, 18, 16, 12, 8, 5],
-            statements: [{
+            statements: [
+                {
                 "statement": "1. Is critical, skeptical, not easily impressed.",
                 "factors": []
             }, {
@@ -316,7 +520,8 @@ function pushSortTypes(){
                 {name: "Intellect / Imagination"}
             ],
             distribution: [3, 5, 6, 7, 8, 7, 6, 5, 3],
-            statements: [{
+            statements: [
+                {
                 "statement": "1. Am the life of the party.",
                 "factors": [1, 0, 0, 0, 0]
             }, {
