@@ -3,9 +3,16 @@ import firebase, {auth} from "firebase";
 import {StyledFirebaseAuth} from 'react-firebaseui';
 
 import './App.css';
-
-import Body from './components/Body'
+import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
+import SortSelects from './components/SortSelects'
 import * as firebaseui from "firebaseui";
+import NavbarContainer, {useStyles} from "./components/dashboard/NavbarContainer";
+import {DashboardBody} from "./components/dashboard/DashboardBody";
+import Analysis from "./Analysis";
+import {DoSort} from "./components/SortDoing/DoSort";
+import {SortSelectionContext} from "./components/SortSelectionContext";
+import SignInSide from "./SignInSide";
+import {CircularProgress} from "@material-ui/core";
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -23,36 +30,64 @@ const uiConfig = {
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     ]
 };
-function LoginOrName() {
+function LoginSwitcher(props: {loggedIn: JSX.Element, loggedOut: JSX.Element}) {
     const [user, setUser] = React.useState<firebase.User | null>(null);
-
+    const [waiting, setWaiting] = React.useState<boolean>(true);
     React.useEffect(() => {
-        firebase.auth().onAuthStateChanged((u) => {setUser(u)});
+        firebase.auth().onAuthStateChanged((u) => {setUser(u); setWaiting(false);});
+
     }, []);
 
-    if (user == null){
-        return <StyledFirebaseAuth uiConfig={uiConfig}
-                                   firebaseAuth={firebase.auth()}/>
+    if (waiting){
+        return <div style={{textAlign: "center", marginTop:"50vh", height: "100vh"}}>
+            <CircularProgress style={{height: 80, width: 80}}/>
+        </div>
+    }else if (user == null){
+        return props.loggedOut
     }else {
-        return <h4>Hello, {user.displayName == null ? "friend" : user.displayName.split(' ')[0]}</h4>
+        return props.loggedIn
     }
 
 }
 function App(): JSX.Element {
     const sideStyle = {alignSelf: "flex-end", margin: "auto", flexGrow: 1, flexBasis: 0};
+    const classes = useStyles();
     return (
-        <div className="App">
-            <header className="App-header">
+        <LoginSwitcher
+            loggedIn={
+                <Router>
+                    <NavbarContainer>
+
+                        <Route path={["/dashboard", "/"]} exact>
+                            <DashboardBody/>
+                        </Route>
+                        <Route path="/dosort">
+                            <SortSelects>
+                                <DoSort/>
+                            </SortSelects>
+                        </Route>
+                        <Route path="/compare">
+                            <SortSelects>
+                                <Analysis/>
+                            </SortSelects>
+                        </Route>
+                    </NavbarContainer>
+                </Router>
+
+            }
+            loggedOut={ <SignInSide uiConfig={uiConfig}/>/*
+                <div className="App">
+                    <header className="App-header">
                 <span style={sideStyle}>
 
                 </span>
-                <h1 style={{margin: 'auto'}}>Q Sorter</h1>
-                <span style={sideStyle}>
-                    <LoginOrName/>
+                        <h1 style={{margin: 'auto'}}>Q Sorter</h1>
+                        <span style={sideStyle}>
+
                 </span>
-            </header>
-            <Body/>
-        </div>
+                    </header>
+                </div>
+            */}/>
     );
 }
 

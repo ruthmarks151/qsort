@@ -77,7 +77,8 @@ export class Sort extends Record({
     }
 
     group(i: PileId): StatementString[]{
-        const starements = this.result.get(i as PileId);
+        // @ts-ignore TODO Fix this!
+        const starements = this.result[i as PileId];
         if (starements === undefined){
             throw(Error("Key Error"))
         }

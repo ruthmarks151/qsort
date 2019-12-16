@@ -1,8 +1,10 @@
 import {SortMetaData} from "../../types/SortMetadata";
-import {useStyles} from "./SortPicker";
 import React, {useRef} from "react";
 import {TextField} from "@material-ui/core";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import {useStyles} from "../dashboard/NavbarContainer";
 
 export function SortMetaDataSelector(props: {}) {
     const classes = useStyles();
@@ -36,17 +38,24 @@ export function SortMetaDataSelector(props: {}) {
     };
 
     return (
-        <div>
-            <TextField className={classes.formControl} id="sorted-by-field" ref={sortedByField} label="Sorted By"
-                       variant="outlined" onChange={handleChangeFor("sortedBy")}
-                       value={sortSelectionContext.sortMetaData.sortedBy}/>
-            <TextField className={classes.formControl} id="sort-class-field" ref={sortClassField} label="Sort Class"
-                       variant="outlined"
-                       onChange={handleChangeFor("sortClass")} value={sortSelectionContext.sortMetaData.sortClass}/>
-            <TextField className={classes.formControl} id="note-field" ref={noteField} label="Note" variant="outlined"
-                       onChange={handleChangeFor("note")}
-                       value={sortSelectionContext.sortMetaData.note}/>
-
-        </div>
+        <Paper className={classes.paper}>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={4}>
+                    <TextField id="sorted-by-field" ref={sortedByField} label="Sorted By"
+                               variant="outlined" onChange={handleChangeFor("sortedBy")}
+                               value={sortSelectionContext.sortMetaData.sortedBy}/>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <TextField id="sort-class-field" ref={sortClassField} label="Sort Class"
+                               variant="outlined"
+                               onChange={handleChangeFor("sortClass")} value={sortSelectionContext.sortMetaData.sortClass}/>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <TextField id="note-field" ref={noteField} label="Note" variant="outlined"
+                               onChange={handleChangeFor("note")}
+                               value={sortSelectionContext.sortMetaData.note}/>
+                </Grid>
+            </Grid>
+        </Paper>
     );
 }

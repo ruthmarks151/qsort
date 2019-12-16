@@ -14,12 +14,12 @@ import DoneIcon from '@material-ui/icons/Done';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      margin: 'auto',
+      //margin: 'auto',
     },
     paper: {
-      width: '40vw',
+      //width: '40vw',
       // height: 600,
-      overflow: 'auto',
+      //overflow: 'auto',
     },
     button: {
       margin: theme.spacing(0.5, 0),
@@ -104,8 +104,8 @@ export default function BucketAnnealer(props: BucketAnnealerProps) {
         <h3>Step 3: Check your work and swap statements such that the statements on the right all better describe the
             subject of the sort better than the statements on the left</h3>
         <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-            <Grid item>{customList(sort[index])}</Grid>
-            <Grid item>
+            <Grid item style={{flexGrow: 1, flexBasis: 264, margin: "auto"}}>{customList(sort[index])}</Grid>
+            <Grid item style={{flexGrow: 0, margin: "auto"}}>
                 <Grid container direction="column" alignItems="center">
                     <Button
                         variant="outlined"
@@ -129,7 +129,7 @@ export default function BucketAnnealer(props: BucketAnnealerProps) {
 
                 </Grid>
             </Grid>
-            <Grid item>{customList(sort[index + 1])}</Grid>
+            <Grid item style={{flexGrow: 1, flexBasis: 264, margin: "auto"}}>{customList(sort[index + 1])}</Grid>
         </Grid>
     </div>);
 }

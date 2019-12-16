@@ -1,26 +1,17 @@
 import React, {useState} from "react";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
-import {StatementString} from "../../types/SortType";
+import {SortType, StatementString} from "../../types/SortType";
 import BucketAnnealer from "./BucketAnnealer";
 import {asSortMapping, PileId, pushSort, Sort} from "../../types/Sort";
 import {Timestamp} from "../../firebase";
 import BucketTransposition from "./BucketTransposition";
 import LikertSort from "./LikertSort";
+import {blankSortMetaData, SortMetaData} from "../../types/SortMetadata";
+import {Paper} from "@material-ui/core";
+import {NavbarContext, useStyles} from "../dashboard/NavbarContainer";
+import Grid from "@material-ui/core/Grid";
 
-interface DoSortProps {
-    onSortSaved: (_: Sort) => void;
-}
-
-export function DoSort(props: DoSortProps) {
-    const sortSelectionContext = React.useContext<ISortSelectionContext>(SortSelectionContext);
-
-    const [likertResults, setLikertResults] = useState<StatementString[][] | null>(null);
-    const [bucketResults, setBucketResults] = useState<StatementString[][] | null>(null);
-
-    const sortType = sortSelectionContext.sortType;
-    const primarySort = sortSelectionContext.primarySort;
-    const comparisonSort = sortSelectionContext.comparisonSort;
-
+function sortBody(sortType: SortType | null, primarySort: Sort | null, likertResults: StatementString[][] | null, bucketResults: StatementString[][] | null, sortSelectionContext: ISortSelectionContext, updatePrimarySort: (sort: (Sort | null)) => void, setBucketResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, setLikertResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, comparisonSort: Sort | null) {
     if (sortType != null) {
         if (primarySort == null) {
             if (likertResults != null) {
@@ -33,7 +24,7 @@ export function DoSort(props: DoSortProps) {
                                                    result: asSortMapping(x),
                                                    sortTypeId: sortType.id,
                                                    sortedOn: Timestamp.now()
-                                               }, props.onSortSaved);
+                                               }, updatePrimarySort);
                                            }}/>;
                 } else {
                     return <BucketTransposition sortType={sortType}
@@ -69,5 +60,30 @@ export function DoSort(props: DoSortProps) {
     } else {
         return <h3>Select a sort type</h3>
     }
+}
+
+export function DoSort(props: {}) {
+    const sortSelectionContext = React.useContext<ISortSelectionContext>(SortSelectionContext);
+
+    const [likertResults, setLikertResults] = useState<StatementString[][] | null>(null);
+    const [bucketResults, setBucketResults] = useState<StatementString[][] | null>(null);
+
+    const sortType = sortSelectionContext.sortType;
+    const primarySort = sortSelectionContext.primarySort;
+    const comparisonSort = sortSelectionContext.comparisonSort;
+
+    const updatePrimarySort = (sort:Sort | null):void => {
+        sortSelectionContext.setPrimarySort(sort);
+        sortSelectionContext.setSortMetaData(sort != null ? sort as SortMetaData : blankSortMetaData())
+    };
+    const classes = useStyles();
+
+    React.useContext(NavbarContext).setTitle("Sorting");
+
+    return <Grid item xs={12}>
+        <Paper className={classes.paper} style={{width: "100%", justifyContent: "center", textAlign: "center"}}>
+            {sortBody(sortType, primarySort, likertResults, bucketResults, sortSelectionContext, updatePrimarySort, setBucketResults, setLikertResults, comparisonSort)}
+        </Paper>
+    </Grid>;
 
 }

@@ -7,17 +7,17 @@ import {analysisReady, SortSelectionContext} from "./SortSelectionContext";
 import {blankSortMetaData, SortMetaData} from "../types/SortMetadata";
 import {SortMetaDataSelector} from "./SortSelection/SortMetaDataSelector";
 import {DoSort} from "./SortDoing/DoSort";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import {useStyles} from "./dashboard/NavbarContainer";
 
-function Body(props: {}) {
+function SortSelects(props: { children: JSX.Element }) {
+    const classes = useStyles();
+
     const [primarySort, setPrimarySort] = useState<Sort | null>(null);
     const [comparisonSort, setComparisonSort] = useState<Sort | null>(null);
     const [sortType, setSortType] = useState<SortType | null>(null);
     const [sortMetaData, setSortMetaData] = useState<SortMetaData>(blankSortMetaData());
-
-    const updatePrimarySort = (sort:Sort | null):void => {
-        setPrimarySort(sort);
-        setSortMetaData(sort != null ? sort as SortMetaData : blankSortMetaData())
-    };
 
     const context = {
         sortType: sortType,
@@ -30,15 +30,22 @@ function Body(props: {}) {
         setSortMetaData: setSortMetaData
     };
 
-    return <SortSelectionContext.Provider value={context}>
-        <SortPicker/>
-        <SortMetaDataSelector/>
-        {analysisReady(context)
-            ? <Analysis sortType={context.sortType!}
-                        primarySort={context.primarySort!}
-                        comparisonSort={context.comparisonSort!}/>
-            : <DoSort onSortSaved={updatePrimarySort}/>}
-    </SortSelectionContext.Provider>
+    return (
+        <Container maxWidth="lg" className={classes.container}>
+            <SortSelectionContext.Provider value={context}>
+                <Grid container spacing={3} alignItems="stretch">
+                    {/* Chart */}
+                    <Grid item xs={12}>
+                        <SortPicker/>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <SortMetaDataSelector/>
+                    </Grid>
+                    {props.children}
+                </Grid>
+            </SortSelectionContext.Provider>
+        </Container>
+    );
 }
 
-export default Body;
+export default SortSelects;
