@@ -3,19 +3,19 @@ import React from 'react';
 import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-import {PileId, Sort} from "./Sort";
+import {PileId, qSort} from "./QSort";
 import {Map} from "immutable";
-import {StatementString} from "./SortType";
+import {StatementString} from "./QSet";
 
 configure({ adapter: new Adapter() });
 
 
 it('crashes when given invalid construction object', () => {
-    expect(() => (new Sort({}))).toThrowError(RegExp(".*not defined in Sort constructor"));
+    expect(() => (new qSort({}))).toThrowError(RegExp(".*not defined in Sort constructor"));
 });
 
 it('constructs with a valid constructor', () => {
-   new Sort({
+   new qSort({
        id: "an id",
        note: "a note",
        result: Map<PileId, StatementString[]>([

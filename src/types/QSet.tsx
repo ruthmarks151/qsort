@@ -1,6 +1,7 @@
 import {databaseRef} from "../firebase";
 import {Record} from "immutable";
-
+import firebase from "firebase";
+type DocumentReference = firebase.firestore.DocumentReference;
 type DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 // Factor - Map
@@ -35,12 +36,12 @@ export interface SortTypeObj {
     distribution: number[],
     factors: Factor[],
     name: string,
-    statements: Statement[]
+    statements: { [key:string]: Statement[]}
 }
 
 // SortType - Document
 // A type of Q Sort that can be performed
-export class SortType extends Record({
+export class QSet extends Record({
     id: undefined as unknown as string, // DocumentID as represented in the DB
     distribution: undefined as unknown as number[],
     // The number of cards in each "pile" in the sort.
@@ -49,7 +50,7 @@ export class SortType extends Record({
 
     factors: undefined as unknown as Factor[], // The factors calculated by this SortType
     name: undefined as unknown as string, // The name of the SortType
-    statements: undefined as unknown as Statement[] // The statements in the SortType as Statements
+    statements: undefined as unknown as { [key:string]: Statement} // The statements in the SortType as Statements
 }){
     constructor(vals: any) {
         super(vals);
@@ -61,21 +62,21 @@ export class SortType extends Record({
         });
     }
 
-    static fromDocumentSnapshot(doc: DocumentSnapshot): SortType | null {
+    static fromDocumentSnapshot(doc: DocumentSnapshot): QSet | null {
         const data = doc.data();
         if (data === undefined) return null;
         const params: {[key: string]: any} = data;
         params.id = doc.id;
-        return new SortType(params);
+        return new QSet(params);
     }
 }
 
-export function listenForSortTypes(onUpdate: (_: SortType[]) => void): () => void {
-    return databaseRef.collection("sortTypes")
+export function listenForQSet(onUpdate: (_: QSet[]) => void): () => void {
+    return databaseRef.collection("qSets")
         .onSnapshot(function (querySnapshot) {
-            var sortTypes: SortType[] = [];
+            var sortTypes: QSet[] = [];
             querySnapshot.forEach(function (doc) {
-                const sortType = SortType.fromDocumentSnapshot(doc);
+                const sortType = QSet.fromDocumentSnapshot(doc);
                 if(sortType != null)
                     sortTypes.push(sortType);
             });
@@ -83,11 +84,15 @@ export function listenForSortTypes(onUpdate: (_: SortType[]) => void): () => voi
         })
 }
 
-export function getSortType(sortTypeId: string, onSortType: (_:SortType | null) => void):void {
-    databaseRef.collection("sortTypes").doc(sortTypeId).get().then((doc) => {
-            onSortType(SortType.fromDocumentSnapshot(doc));
+export function getQSet(sortTypeId: string, onSortType: (_:QSet | null) => void):void {
+    databaseRef.collection("qSets").doc(sortTypeId).get().then((doc) => {
+            onSortType(QSet.fromDocumentSnapshot(doc));
     }).catch(function (error) {
         console.log("Error getting document:", error);
     });
 
 }
+
+export const qSetRef = (sortTypeId: string): DocumentReference => {
+    return databaseRef.collection('qSets').doc(sortTypeId);
+};

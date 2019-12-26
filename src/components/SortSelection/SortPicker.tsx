@@ -6,8 +6,8 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-import {SortType, listenForSortTypes, getSortType} from "../../types/SortType";
-import {getSort, listenForSortsByType, Sort} from "../../types/Sort";
+import {QSet, listenForQSet, getQSet} from "../../types/QSet";
+import {getSort, listenForSortsByType, qSort} from "../../types/QSort";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -24,8 +24,8 @@ export default function SortPicker(props: {}) {
     const [labelWidth, setLabelWidth] = React.useState(0);
 
     // Dropdown options
-    const [sortTypes, setSortTypes] = React.useState<SortType[]>([]);
-    const [sorts, setSorts] = React.useState<Sort[]>([]);
+    const [sortTypes, setSortTypes] = React.useState<QSet[]>([]);
+    const [sorts, setSorts] = React.useState<qSort[]>([]);
 
     // Selected items
     const sortTypeId = sortSelectionContext.sortType != null ? sortSelectionContext.sortType.id : '';
@@ -34,7 +34,7 @@ export default function SortPicker(props: {}) {
 
     React.useEffect(() => {
         // setLabelWidth(inputLabel.current!.offsetWidth);
-        listenForSortTypes((sortTypes: SortType[]) => setSortTypes(sortTypes));
+        listenForQSet((sortTypes: QSet[]) => setSortTypes(sortTypes));
     }, []);
 
     React.useEffect(() => {
@@ -50,7 +50,7 @@ export default function SortPicker(props: {}) {
         sortSelectionContext.setPrimarySort(null);
         sortSelectionContext.setComparisonSort(null);
         if(newSortTypeId !== ''){
-            getSortType(newSortTypeId, sortSelectionContext.setSortType);
+            getQSet(newSortTypeId, sortSelectionContext.setSortType);
         } else {
             sortSelectionContext.setSortType(null)
         }
@@ -70,7 +70,7 @@ export default function SortPicker(props: {}) {
                             <MenuItem value="">
                                 <em>None</em>
                             </MenuItem>
-                            {sortTypes.map((st: SortType) => <MenuItem value={st.id}>{st.name}</MenuItem>)}
+                            {sortTypes.map((st: QSet) => <MenuItem value={st.id}>{st.name}</MenuItem>)}
                         </Select>
                         <FormHelperText>Select the sort type</FormHelperText>
                     </FormControl>
@@ -88,7 +88,7 @@ export default function SortPicker(props: {}) {
                             <MenuItem value="new">
                                 <em>New Sort</em>
                             </MenuItem>
-                            {sorts.map((st: Sort) => <MenuItem value={st.id}>{st.name()}</MenuItem>)}
+                            {sorts.map((st: qSort) => <MenuItem value={st.id}>{st.name()}</MenuItem>)}
                         </Select>
                         <FormHelperText>Select the intial sort</FormHelperText>
                     </FormControl>
@@ -106,7 +106,7 @@ export default function SortPicker(props: {}) {
                             <MenuItem value="none">
                                 <em>None</em>
                             </MenuItem>
-                            {sorts.map((st: Sort) => <MenuItem value={st.id}>{st.name()}</MenuItem>)}
+                            {sorts.map((st: qSort) => <MenuItem value={st.id}>{st.name()}</MenuItem>)}
                         </Select>
                         <FormHelperText>Select a sort to compare with</FormHelperText>
                     </FormControl>

@@ -1,4 +1,4 @@
-import {SortType, StatementString} from "./SortType";
+import {QSet, qSetRef, StatementString} from "./QSet";
 import {databaseRef} from "../firebase";
 import firebase from "firebase";
 import {Map, Record} from 'immutable'
@@ -19,27 +19,31 @@ export type SortMapping = Map<PileId, StatementString[]>;
 export interface SortObj {
     note: string,
     result: SortMapping,
-    sortTypeId: string,
+    statementPositions: {[key:string]: number},
+    qSetId: string,
     sortClass: string,
     sortedBy: string,
-    sortedOn: any
+    sortedOn: any,
+    user: string
 }
 
 // Sort - Document
 // The result of one Q Sort by a user
-export class Sort extends Record({
+export class qSort extends Record({
     id: undefined as unknown as string, // DB ID
     note: undefined as unknown as string, // Note about the sort
     result: undefined as unknown as SortMapping, // The result of the sort
-    sortTypeId: undefined  as unknown as string, // ID of the SortType
+   // sortTypeId: undefined  as unknown as string, // ID of the SortType
+    qSetId: undefined  as unknown as string, // ID of the SortType
     sortClass: undefined as unknown as string, // A description of the sort class
-    sortedBy: undefined as unknown as string, // The sorter
-    sortedOn: undefined as unknown as any // The date of the sort
+    sortedBy: undefined as unknown as string | undefined, // The sorter
+    sortedOn: undefined as unknown as any, // The date of the sort
+    user: undefined as unknown as string
 }, "Sort"){
 
     constructor(vals: any) {
         super(vals);
-        const optionalFields = [] as string[];
+        const optionalFields = ["sortedBy"] as string[];
         this.toSeq().forEach((value: any, key: string) => {
             if(optionalFields.indexOf(key) === -1 && value === undefined)
                 throw Error(`${key} not defined in Sort constructor`);
@@ -47,13 +51,13 @@ export class Sort extends Record({
         });
     }
 
-    static fromDocumentSnapshot(doc: DocumentSnapshot): Sort | null {
+    static fromDocumentSnapshot(doc: DocumentSnapshot): qSort | null {
         const data = doc.data();
         if (data === undefined) return null;
         const params: {[key: string]: any} = data;
         params.id = doc.id;
-        params.sortTypeId = data.sortType.id;
-        return new Sort(params);
+        params.qSetId = data.qSet.id;
+        return new qSort(params);
     }
 
     rankOf(statement: StatementString): Rank {
@@ -73,7 +77,7 @@ export class Sort extends Record({
     }
 
     name(): string {
-        return `${this.sortClass} by ${this.sortedBy} on ${this.sortedOn.toDate().toDateString()} using ${this.sortTypeId}`;
+        return `${this.sortClass} by ${this.sortedBy} on ${this.sortedOn.toDate().toDateString()} using ${this.qSetId}`;
     }
 
     group(i: PileId): StatementString[]{
@@ -92,17 +96,27 @@ export function asSortMapping(x: StatementString[][]): SortMapping {
     }, Map<PileId, StatementString[]>()) as SortMapping
 }
 
-const sortTypeRef = (sortTypeId: string): DocumentReference => {
-    return databaseRef.collection('sortTypes').doc(sortTypeId);
-};
+export function asStatementPositions(qSet: QSet, result: StatementString[][]) {
+    const {statements } = qSet;
+    const statementPositions = {} as {[key: string]: any};
+    for (let [statementCode, {statement}] of Object.entries(statements)) {
+        console.log(`${statementCode}: ${statement}`);
+        const m = asSortMapping(result);
+        statementPositions[statementCode] = m.reduce((res, list1, i) => {
+                return list1.indexOf(statement) !== -1 ? i : res;
+            }, -1)
+    }
+    return statementPositions
+}
 
-export function listenForSortsByType(sortTypeId: string, onUpdate: (_: Sort[]) => void): () => void {
-    return (databaseRef.collection("sorts")
-        .where("sortType", "==", sortTypeRef(sortTypeId))
+
+export function listenForSortsByType(sortTypeId: string, onUpdate: (_: qSort[]) => void): () => void {
+    return (databaseRef.collection("qSorts")
+        .where("qSet", "==", qSetRef(sortTypeId))
         .onSnapshot(function (querySnapshot) {
-            var sorts: Sort[] = [];
+            var sorts: qSort[] = [];
             querySnapshot.forEach(function (doc) {
-                const sort = Sort.fromDocumentSnapshot(doc);
+                const sort = qSort.fromDocumentSnapshot(doc);
                 if (sort != null)
                     sorts.push(sort);
             });
@@ -110,10 +124,10 @@ export function listenForSortsByType(sortTypeId: string, onUpdate: (_: Sort[]) =
         }));
 }
 
-export function getSort(id: string, storeFunction: (_: Sort | null) => void): void {
-    databaseRef.collection("sorts").doc(id).get().then((doc) => {
+export function getSort(id: string, storeFunction: (_: qSort | null) => void): void {
+    databaseRef.collection("qSorts").doc(id).get().then((doc) => {
         if (doc.exists) {
-            storeFunction(Sort.fromDocumentSnapshot(doc));
+            storeFunction(qSort.fromDocumentSnapshot(doc));
         } else {
             storeFunction(null);
         }
@@ -122,15 +136,15 @@ export function getSort(id: string, storeFunction: (_: Sort | null) => void): vo
     });
 }
 
-export function pushSort(sort: SortObj, onComplete: (_: Sort) => void) {
+export function pushSort(sort: SortObj, onComplete: (_: qSort) => void) {
     // Add a new document with a generated id.
     const sortParams = sort as {[key: string]: any};
-    sortParams["sortType"] = sortTypeRef(sort["sortTypeId"]);
+    sortParams["qSet"] = qSetRef(sort["qSetId"]);
     sortParams["result"] = sort.result.toJS();
-    databaseRef.collection("sorts").add(sortParams)
+    databaseRef.collection("qSorts").add(sortParams)
         .then((ref) => ref.get()
             .then(function (doc) {
-                const sortRecord = Sort.fromDocumentSnapshot(doc);
+                const sortRecord = qSort.fromDocumentSnapshot(doc);
                 if (sortRecord === null) throw Error("Sort not created, but without error. This is a real problem");
                 onComplete(sortRecord);
             })

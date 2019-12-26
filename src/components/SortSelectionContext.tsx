@@ -1,16 +1,16 @@
 // import {StatementString} from "./types/SortType";
 import React from "react";
-import {SortType} from "../types/SortType";
-import {Sort} from "../types/Sort";
+import {QSet} from "../types/QSet";
+import {qSort} from "../types/QSort";
 import {blankSortMetaData, SortMetaData} from "../types/SortMetadata";
 
 export interface ISortSelectionContext {
-    sortType: SortType | null;
-    setSortType: (_: SortType | null) => void
-    primarySort: Sort | null;
-    setPrimarySort: (_: Sort | null) => void;
-    comparisonSort: Sort | null;
-    setComparisonSort: (_: Sort | null) => void;
+    sortType: QSet | null;
+    setSortType: (_: QSet | null) => void
+    primarySort: qSort | null;
+    setPrimarySort: (_: qSort | null) => void;
+    comparisonSort: qSort | null;
+    setComparisonSort: (_: qSort | null) => void;
     sortMetaData: SortMetaData;
     setSortMetaData: (_: SortMetaData) => void;
 }
@@ -21,13 +21,13 @@ export function analysisReady(context: ISortSelectionContext): boolean {
 
 export const SortSelectionContext = React.createContext<ISortSelectionContext>({
     sortType: null,
-    setSortType: (_: SortType | null) => {
+    setSortType: (_: QSet | null) => {
     },
     primarySort: null,
-    setPrimarySort: (_: Sort | null) => {
+    setPrimarySort: (_: qSort | null) => {
     },
     comparisonSort: null,
-    setComparisonSort: (_: Sort | null) => {
+    setComparisonSort: (_: qSort | null) => {
     },
     sortMetaData: blankSortMetaData(),
     setSortMetaData: (_: SortMetaData) => {

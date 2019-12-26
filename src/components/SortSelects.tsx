@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import Analysis from '../Analysis'
 import SortPicker from "./SortSelection/SortPicker";
-import {Sort} from "../types/Sort";
-import {SortType} from "../types/SortType";
+import {qSort} from "../types/QSort";
+import {QSet} from "../types/QSet";
 import {analysisReady, SortSelectionContext} from "./SortSelectionContext";
 import {blankSortMetaData, SortMetaData} from "../types/SortMetadata";
 import {SortMetaDataSelector} from "./SortSelection/SortMetaDataSelector";
@@ -14,9 +14,9 @@ import {useStyles} from "./dashboard/NavbarContainer";
 function SortSelects(props: { children: JSX.Element }) {
     const classes = useStyles();
 
-    const [primarySort, setPrimarySort] = useState<Sort | null>(null);
-    const [comparisonSort, setComparisonSort] = useState<Sort | null>(null);
-    const [sortType, setSortType] = useState<SortType | null>(null);
+    const [primarySort, setPrimarySort] = useState<qSort | null>(null);
+    const [comparisonSort, setComparisonSort] = useState<qSort | null>(null);
+    const [sortType, setSortType] = useState<QSet | null>(null);
     const [sortMetaData, setSortMetaData] = useState<SortMetaData>(blankSortMetaData());
 
     const context = {

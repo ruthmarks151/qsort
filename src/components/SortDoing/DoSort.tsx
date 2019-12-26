@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
-import {SortType, StatementString} from "../../types/SortType";
+import {QSet, StatementString} from "../../types/QSet";
 import BucketAnnealer from "./BucketAnnealer";
-import {asSortMapping, PileId, pushSort, Sort} from "../../types/Sort";
+import {asSortMapping, asStatementPositions, PileId, pushSort, qSort} from "../../types/QSort";
 import {Timestamp} from "../../firebase";
 import BucketTransposition from "./BucketTransposition";
 import LikertSort from "./LikertSort";
@@ -10,8 +10,9 @@ import {blankSortMetaData, SortMetaData} from "../../types/SortMetadata";
 import {Paper} from "@material-ui/core";
 import {NavbarContext, useStyles} from "../dashboard/NavbarContainer";
 import Grid from "@material-ui/core/Grid";
+import firebase from "firebase";
 
-function sortBody(sortType: SortType | null, primarySort: Sort | null, likertResults: StatementString[][] | null, bucketResults: StatementString[][] | null, sortSelectionContext: ISortSelectionContext, updatePrimarySort: (sort: (Sort | null)) => void, setBucketResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, setLikertResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, comparisonSort: Sort | null) {
+function sortBody(sortType: QSet | null, primarySort: qSort | null, likertResults: StatementString[][] | null, bucketResults: StatementString[][] | null, sortSelectionContext: ISortSelectionContext, updatePrimarySort: (sort: (qSort | null)) => void, setBucketResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, setLikertResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, comparisonSort: qSort | null) {
     if (sortType != null) {
         if (primarySort == null) {
             if (likertResults != null) {
@@ -22,8 +23,10 @@ function sortBody(sortType: SortType | null, primarySort: Sort | null, likertRes
                                                pushSort({
                                                    ...sortSelectionContext.sortMetaData,
                                                    result: asSortMapping(x),
-                                                   sortTypeId: sortType.id,
-                                                   sortedOn: Timestamp.now()
+                                                   statementPositions: asStatementPositions(sortType, x),
+                                                   qSetId: sortType.id,
+                                                   sortedOn: Timestamp.now(),
+                                                   user: firebase.auth().currentUser?.uid || "Anonymous"
                                                }, updatePrimarySort);
                                            }}/>;
                 } else {
@@ -72,7 +75,7 @@ export function DoSort(props: {}) {
     const primarySort = sortSelectionContext.primarySort;
     const comparisonSort = sortSelectionContext.comparisonSort;
 
-    const updatePrimarySort = (sort:Sort | null):void => {
+    const updatePrimarySort = (sort:qSort | null):void => {
         sortSelectionContext.setPrimarySort(sort);
         sortSelectionContext.setSortMetaData(sort != null ? sort as SortMetaData : blankSortMetaData())
     };

@@ -9,7 +9,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
-import {SortType, StatementString} from "../../types/SortType";
+import {QSet, StatementString} from "../../types/QSet";
 
 
 function extremes<T>(list: T[], qualifier: (_:T) => boolean): [number, number]{
@@ -78,7 +78,7 @@ function renderPickables(items: PickableItem[], pick: (_:number) => void): JSX.E
 }
 
 export interface BucketTranspositionProps {
-    sortType: SortType;
+    sortType: QSet;
     source: StatementString[][];
     onComplete: (_:StatementString[][]) => void;
 }

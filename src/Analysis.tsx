@@ -1,8 +1,8 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import {factorMap} from './inventory'
-import {SortType, StatementString} from "./types/SortType";
-import {PileId, Sort} from "./types/Sort";
+import {QSet, StatementString} from "./types/QSet";
+import {PileId, qSort} from "./types/QSort";
 import clsx from "clsx";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
@@ -116,9 +116,9 @@ function produceSankey(inventory: StatementString[], primaryRank: { [key: string
 export {correlation}
 
 export interface AnalysisProps {
-    sortType: SortType;
-    primarySort: Sort;
-    comparisonSort: Sort;
+    sortType: QSet;
+    primarySort: qSort;
+    comparisonSort: qSort;
 }
 
 
@@ -131,7 +131,7 @@ export default function Analysis(p: {} ){
     const sortSelectionContext = React.useContext<ISortSelectionContext>(SortSelectionContext);
     const classes = useStyles();
     React.useContext(NavbarContext).setTitle("Analysis");
-    if (!analysisReady(sortSelectionContext)) return <h1> Select shit</h1>;
+    if (!analysisReady(sortSelectionContext)) return <h1>Select shit</h1>;
     const props = {
         sortType: sortSelectionContext.sortType!,
         primarySort: sortSelectionContext.primarySort!,
@@ -141,7 +141,7 @@ export default function Analysis(p: {} ){
 
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-    const inventory: StatementString[] = props.sortType.statements.map(s => s.statement);
+    const inventory: StatementString[] = Object.values(props.sortType.statements).map(s => s.statement);
 
     const shape = props.sortType.distribution;
     const primaryArray = shape.reduce((arr, _, i) => [...arr, props.primarySort.group(i as PileId)], [] as StatementString[][]);
