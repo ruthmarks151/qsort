@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import Analysis from '../Analysis'
+import Analysis from '../pages/Analysis/Analysis'
 import SortPicker from "./SortSelection/SortPicker";
 import {qSort} from "../types/QSort";
 import {QSet} from "../types/QSet";

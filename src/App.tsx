@@ -8,7 +8,7 @@ import SortSelects from './components/SortSelects'
 import * as firebaseui from "firebaseui";
 import NavbarContainer, {useStyles} from "./components/dashboard/NavbarContainer";
 import {DashboardBody} from "./components/dashboard/DashboardBody";
-import Analysis from "./Analysis";
+import Analysis from "./pages/Analysis/Analysis";
 import {DoSort} from "./components/SortDoing/DoSort";
 import {SortSelectionContext} from "./components/SortSelectionContext";
 import SignInSide from "./SignInSide";

@@ -11,7 +11,6 @@ import {getSort, listenForSortsByType, qSort} from "../../types/QSort";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import {correlation} from "../../Analysis";
 import {useStyles} from "../dashboard/NavbarContainer";
 
 export default function SortPicker(props: {}) {
