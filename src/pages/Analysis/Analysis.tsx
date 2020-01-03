@@ -77,7 +77,7 @@ export default function Analysis(p: {} ){
                     />
 
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>
+                        <Paper className={classes.paper} style={{width: "100%", height: "80vh"}}>
                             <CongruencePlot
                                 primarySort={props.primarySort}
                                 comparisonSort={props.comparisonSort}

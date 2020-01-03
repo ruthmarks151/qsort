@@ -28,7 +28,7 @@ export default function CongruenceChart({sorts}: { sorts: qSort[] }) {
                     const self = selfSorts.filter(s => s.qSetId === set && s.sortedOn.toMillis() <= time).slice(-1)[0];
                     const ideal = idealSorts.filter(s => s.qSetId === set && s.sortedOn.toMillis() <= time).slice(-1)[0];
 
-                    const r = self && ideal ? correlation(self, ideal) : undefined;
+                    const r = self && ideal ? correlation(self, ideal).toFixed(3) : undefined;
                     return [set, r]
                 }))
             }
