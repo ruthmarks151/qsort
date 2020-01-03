@@ -52,7 +52,7 @@ export class qSort extends Record({
 
     constructor(vals: any) {
         super(vals);
-        const optionalFields = ["sortedBy"] as string[];
+        const optionalFields = ["sortedBy", "sortClass"] as string[];
         this.toSeq().forEach((value: any, key: string) => {
             if (optionalFields.indexOf(key) === -1 && value === undefined)
                 throw Error(`${key} not defined in Sort constructor`);
@@ -193,6 +193,7 @@ export function pushSort(sort: SortObj, onComplete: (_: qSort) => void) {
     // Add a new document with a generated id.
     const sortParams = sort as { [key: string]: any };
     sortParams["qSet"] = qSetRef(sort["qSetId"]);
+    sortParams["qSubject"] = databaseRef.collection("qSubjects").doc(sort["qSubjectId"]);
     sortParams["result"] = sort.result.toJS();
     databaseRef.collection("qSorts").add(sortParams)
         .then((ref) => ref.get()

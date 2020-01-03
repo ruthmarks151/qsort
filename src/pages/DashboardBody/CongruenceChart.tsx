@@ -23,7 +23,7 @@ export default function CongruenceChart({sorts}: { sorts: qSort[] }) {
         //{time: (sorts[0].sortedOn.toMillis() - 1), ...Object.fromEntries(qSets.map(set => [set, undefined]))},
         ...times.map(time => {
             return {
-                time: new Date(time).toISOString().substr(0, 10)
+                time
                 , ...Object.fromEntries(qSets.map(set => {
                     const self = selfSorts.filter(s => s.qSetId === set && s.sortedOn.toMillis() <= time).slice(-1)[0];
                     const ideal = idealSorts.filter(s => s.qSetId === set && s.sortedOn.toMillis() <= time).slice(-1)[0];
@@ -44,11 +44,13 @@ export default function CongruenceChart({sorts}: { sorts: qSort[] }) {
                     margin={{
                         top: 16,
                         right: 16,
-                        bottom: 0,
+                        bottom: 30,
                         left: 48,
                     }}
                 >
-                    <XAxis dataKey="time" stroke={theme.palette.text.secondary}
+                    <XAxis dataKey="time"
+                           stroke={theme.palette.text.secondary}
+                           tickFormatter={(d) => (new Date(d).toISOString().substr(0, 10))}
                     />
                     <YAxis stroke={theme.palette.text.secondary}>
                         <Label
@@ -60,7 +62,9 @@ export default function CongruenceChart({sorts}: { sorts: qSort[] }) {
                         </Label>
                     </YAxis>
                     <Legend verticalAlign="top" height={36}/>
-                    <Tooltip/>
+                    <Tooltip
+                        labelFormatter={(d) => (new Date(d).toISOString().substr(0, 10))}
+                    />
                     {qSets.map((setId, i) =>
                         <Line
                             type="monotone"

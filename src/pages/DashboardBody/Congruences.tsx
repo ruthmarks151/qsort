@@ -27,7 +27,7 @@ export default function Congruences({sorts}: { sorts: qSort[] }) {
                 const self = setSorts.filter((s) => s.qSubjectId === "self").slice(-1)[0];
                 const ideal = setSorts.filter((s) => s.qSubjectId === "ideal").slice(-1)[0];
                 const set = self.qSet;
-                const mostRecent =(self.sortedOn.toDate().getTime() > ideal.sortedOn.toDate().getTime() ? self : ideal);
+                const mostRecent =( self && (!ideal || self.sortedOn.toDate().getTime() > ideal.sortedOn.toDate().getTime()) ? self : ideal);
                 if (!(self && ideal)) return <React.Fragment/>;
 
                 return <React.Fragment>
