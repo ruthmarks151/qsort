@@ -6,10 +6,10 @@ import {QSet} from "../types/QSet";
 import {analysisReady, SortSelectionContext} from "./SortSelectionContext";
 import {blankSortMetaData, SortMetaData} from "../types/SortMetadata";
 import {SortMetaDataSelector} from "./SortSelection/SortMetaDataSelector";
-import {DoSort} from "./SortDoing/DoSort";
+import {DoSort} from "../pages/DoSort/DoSort";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import {useStyles} from "./dashboard/NavbarContainer";
+import {useStyles} from "../pages/DashboardBody/NavbarContainer";
 
 function SortSelects(props: { children: JSX.Element }) {
     const classes = useStyles();

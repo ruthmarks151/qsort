@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import {analysisReady, ISortSelectionContext, SortSelectionContext} from "../../components/SortSelectionContext";
-import {NavbarContext, useStyles} from "../../components/dashboard/NavbarContainer";
+import {NavbarContext, useStyles} from "../DashboardBody/NavbarContainer";
 import StatementBlocks from "./StatementBlocks";
 import CongruencePlot from "./CongruencePlot"
 import {Sankey} from "./Sankey";
@@ -17,7 +17,7 @@ import {Factors} from "./Factors";
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
 
 function correlation(sort1: qSort, sort2: qSort): number {
-    const keys = Object.values(sort1.qSet.statements).map(s => s.statement);
+    const keys = Object.keys(sort1.qSet.statements)
     const rank1 = sort1.asRankMap();
     const rank2 = sort2.asRankMap();
 

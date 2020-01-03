@@ -6,10 +6,10 @@ import './App.css';
 import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
 import SortSelects from './components/SortSelects'
 import * as firebaseui from "firebaseui";
-import NavbarContainer, {useStyles} from "./components/dashboard/NavbarContainer";
-import {DashboardBody} from "./components/dashboard/DashboardBody";
+import NavbarContainer, {useStyles} from "./pages/DashboardBody/NavbarContainer";
+import {DashboardBody} from "./pages/DashboardBody/DashboardBody";
 import Analysis from "./pages/Analysis/Analysis";
-import {DoSort} from "./components/SortDoing/DoSort";
+import {DoSort} from "./pages/DoSort/DoSort";
 import {SortSelectionContext} from "./components/SortSelectionContext";
 import SignInSide from "./SignInSide";
 import {CircularProgress} from "@material-ui/core";

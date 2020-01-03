@@ -1,16 +1,16 @@
 import React, {useState} from "react";
-import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
+import {ISortSelectionContext, SortSelectionContext} from "../../components/SortSelectionContext";
 import {QSet, StatementString} from "../../types/QSet";
 import BucketAnnealer from "./BucketAnnealer";
-import {asSortMapping, asStatementPositions, PileId, pushSort, qSort} from "../../types/QSort";
+import {asSortMapping, asStatementPositions, PileId, pushSort, qSort, StatementId} from "../../types/QSort";
 import {Timestamp} from "../../firebase";
 import BucketTransposition from "./BucketTransposition";
 import LikertSort from "./LikertSort";
 import {blankSortMetaData, SortMetaData} from "../../types/SortMetadata";
 import {Paper} from "@material-ui/core";
-import {NavbarContext, useStyles} from "../dashboard/NavbarContainer";
+import {NavbarContext, useStyles} from "../DashboardBody/NavbarContainer";
 import Grid from "@material-ui/core/Grid";
-import firebase from "firebase";
+import firebase from "src/firebase";
 
 function sortBody(sortType: QSet | null, primarySort: qSort | null, likertResults: StatementString[][] | null, bucketResults: StatementString[][] | null, sortSelectionContext: ISortSelectionContext, updatePrimarySort: (sort: (qSort | null)) => void, setBucketResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, setLikertResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, comparisonSort: qSort | null) {
     if (sortType != null) {
@@ -45,8 +45,8 @@ function sortBody(sortType: QSet | null, primarySort: qSort | null, likertResult
             }
         } else if (comparisonSort != null) {
             const shape = sortType.distribution;
-            const primaryArray = shape.reduce((arr, _, i) => [...arr, primarySort.group(i as PileId)], [] as StatementString[][]);
-            const comparisonArray = shape.reduce((arr, _, i) => [...arr, comparisonSort.group(i as PileId)], [] as StatementString[][]);
+            const primaryArray = shape.reduce((arr, _, i) => [...arr, primarySort.group(i as PileId)], [] as StatementId[][]);
+            const comparisonArray = shape.reduce((arr, _, i) => [...arr, comparisonSort.group(i as PileId)], [] as StatementId[][]);
 
             const primaryFits = shape.reduce((fits, fitLen, i) => fits && fitLen === primaryArray[i].length, true);
             const comparisonFits = shape.reduce((fits, fitLen, i) => fits && fitLen === comparisonArray[i].length, true);

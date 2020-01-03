@@ -1,4 +1,4 @@
-import {QSet, qSetRef, StatementString} from "./QSet";
+import {QSet, qSetRef, Statement, StatementString} from "./QSet";
 import {databaseRef} from "../firebase";
 import firebase from "firebase";
 import {Map, Record} from 'immutable'
@@ -15,6 +15,7 @@ export const pileIds = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 // SortMapping - The result of a sorting
 export type SortMapping = Map<PileId, StatementString[]>;
+export type StatementId = string;
 
 export interface SortObj {
     note: string,
@@ -39,10 +40,12 @@ export class qSort extends Record({
     sortedBy: undefined as unknown as string | undefined, // The sorter
     sortedOn: undefined as unknown as any, // The date of the sort
     user: undefined as unknown as DocumentReference,
+    statementPositions: undefined as unknown as { [key: string]: number }
 }, "Sort") {
 
     // @ts-ignore
     qSet: QSet;
+
     constructor(vals: any) {
         super(vals);
         const optionalFields = ["sortedBy"] as string[];
@@ -54,7 +57,7 @@ export class qSort extends Record({
     }
 
     static async fromDocumentSnapshot(doc: DocumentSnapshot): Promise<qSort | null> {
-        return new Promise(async function (resolve,reject) {
+        return new Promise(async function (resolve, reject) {
 
             const data = doc.data();
             if (data === undefined) return null;
@@ -92,17 +95,19 @@ export class qSort extends Record({
         return `${this.sortClass} by ${this.sortedBy} on ${this.sortedOn.toDate().toDateString()} using ${this.qSetId}`;
     }
 
-    group(i: PileId): StatementString[] {
+    group(i: PileId): StatementId[] {
         // @ts-ignore TODO Fix this!
-        const starements = this.result[i as PileId];
-        if (starements === undefined) {
+        const starements =
+            Object.entries(this.statementPositions)
+                .filter(([id, pile]) => pile === i)
+                .map(([id, pile])=> id as StatementId);
+        if (starements === []) {
             throw(Error("Key Error"))
         }
         return starements
     }
 
-    asArrays(): StatementString[][] {
-        while(this.qSet === undefined){}
+    asArrays(): StatementId[][] {
         const shape = this.qSet.distribution;
         return shape.reduce((arr, _, i) => [...arr, this.group(i as PileId)], [] as StatementString[][]);
     }
@@ -138,12 +143,12 @@ export function asStatementPositions(qSet: QSet, result: StatementString[][]) {
 }
 
 
-export function listenForSortsByType(sortTypeId: string, onUpdate: (_: qSort[]) => void): () => void{
+export function listenForSortsByType(sortTypeId: string, onUpdate: (_: qSort[]) => void): () => void {
     return (databaseRef.collection("qSorts")
         .where("user", "==", firebase.auth().currentUser?.uid)
         .where("qSet", "==", qSetRef(sortTypeId))
         .onSnapshot(async function (querySnapshot) {
-            var sorts: Promise<qSort|null>[] = [];
+            var sorts: Promise<qSort | null>[] = [];
             await querySnapshot.forEach(async function (doc) {
 
                 const sort = qSort.fromDocumentSnapshot(doc);
@@ -156,12 +161,12 @@ export function listenForSortsByType(sortTypeId: string, onUpdate: (_: qSort[]) 
             });
             Promise.all(sorts).then(results => {
                 console.log("Ended");
-                onUpdate(results.filter(s => s!== null) as qSort[])
+                onUpdate(results.filter(s => s !== null) as qSort[])
             })
         }));
 }
 
-export function getSort(id: string, storeFunction: (_: qSort | null) => void):void {
+export function getSort(id: string, storeFunction: (_: qSort | null) => void): void {
     databaseRef.collection("qSorts").doc(id).get().then(async (doc) => {
         if (doc.exists) {
             storeFunction(await qSort.fromDocumentSnapshot(doc));

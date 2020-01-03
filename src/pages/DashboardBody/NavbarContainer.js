@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import {mainListItems, secondaryListItems} from './listItems';
 import Box from "@material-ui/core/Box";
 import {makeStyles} from "@material-ui/core/styles";
-import {ISortSelectionContext} from "../SortSelectionContext";
+import {ISortSelectionContext} from "../../components/SortSelectionContext";
 
 
 function Copyright() {

@@ -1,13 +1,13 @@
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import Title from "../../components/dashboard/Title";
+import Title from "../DashboardBody/Title";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
 import {Rank} from "../../pages/Analysis/Analysis";
 import {StatementString} from "../../types/QSet";
 import {qSort} from "../../types/QSort";
 import {inventory} from "../../inventory";
-import {useStyles} from "../../components/dashboard/NavbarContainer";
+import {useStyles} from "../DashboardBody/NavbarContainer";
 
 
 
