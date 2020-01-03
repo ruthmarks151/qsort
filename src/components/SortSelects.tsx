@@ -34,7 +34,7 @@ function SortSelects(props: { children: JSX.Element }) {
         <Container maxWidth="lg" className={classes.container}>
             <SortSelectionContext.Provider value={context}>
                 <Grid container spacing={3} alignItems="stretch">
-                    {/* Chart */}
+                    {/* CongruenceChart */}
                     <Grid item xs={12}>
                         <SortPicker/>
                     </Grid>

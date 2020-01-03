@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import React from "react";
 import {Rank} from "../../pages/Analysis/Analysis";
 import {StatementString} from "../../types/QSet";
-import {qSort} from "../../types/QSort";
+import {qSort, StatementId} from "../../types/QSort";
 import {inventory} from "../../inventory";
 import {useStyles} from "../DashboardBody/NavbarContainer";
 
@@ -29,12 +29,12 @@ export default function StatementBlocks({primarySort, comparisonSort}:{primarySo
         return ((x1 - x2) * (x1 - x2) + (y1 - y2 * (y1 - y2)));
     };
 
-    const statementToPoint = (s: StatementString): [number, number] => [comparisonRank[s], primaryRank[s]];
-    const inventory = Object.values(primarySort.qSet.statements).map(s => s.statement);
+    const statementToPoint = (s: StatementId): [number, number] => [comparisonRank[s], primaryRank[s]];
+    const inventory = Object.keys(primarySort.qSet.statements);
     const movingTerms = inventory.slice();
     movingTerms.sort((a, b) => (Math.abs(primaryRank[b] - comparisonRank[b]) - Math.abs(primaryRank[a] - comparisonRank[a])));
     // const differenceString = (s:StatementString): string => ("("+primaryRank[s] +" -> " + comparisonRank[s] +") ")
-    const differenceString = (s: StatementString): string => {
+    const differenceString = (s: StatementId): string => {
         const delta = comparisonRank[s] - primaryRank[s];
         return Math.abs(delta) + (delta > 0 ? "↗ " : "↘ ")
     };
@@ -52,7 +52,7 @@ export default function StatementBlocks({primarySort, comparisonSort}:{primarySo
                 }}>
                     {movingTerms
                         .filter(s => Math.abs(comparisonRank[s] - primaryRank[s]) >= 3)
-                        .map(s => <Typography component="li"><b>{differenceString(s)}</b> {s}</Typography>)}
+                        .map(s => <Typography component="li"><b>{differenceString(s)}</b> {primarySort.qSet.statements[s].statement}</Typography>)}
                 </ul>
             </Paper>
         </Grid>
@@ -67,7 +67,7 @@ export default function StatementBlocks({primarySort, comparisonSort}:{primarySo
                         margin: 'auto',
                         textAlign: 'left'
                     }}>
-                        {statements.slice(0, 10).map(s => <Typography component="li">{s}</Typography>)}
+                        {statements.slice(0, 10).map(s => <Typography component="li">{primarySort.qSet.statements[s].statement}</Typography>)}
                     </ul>
                 </Paper>
             </Grid>

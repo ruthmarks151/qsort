@@ -7,7 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
 import {QSet, listenForQSet, getQSet} from "../../types/QSet";
-import {getSort, listenForSortsByType, qSort} from "../../types/QSort";
+import {getSort, listenForSortsByQSet, qSort} from "../../types/QSort";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -38,7 +38,7 @@ export default function SortPicker(props: {}) {
 
     React.useEffect(() => {
         if (sortTypeId !== '')
-            return listenForSortsByType(sortTypeId, setSorts)
+            return listenForSortsByQSet(sortTypeId, setSorts)
     }, [sortTypeId]);
 
     const onChangedSortType = (event: React.ChangeEvent<{ value: unknown }>) => {

@@ -22,14 +22,14 @@ export function SortMetaDataSelector(props: {}) {
                 // @ts-ignore
                 note: noteField.current.input.value,
                 // @ts-ignore
-                sortClass: sortClassField.current.input.value,
+                qSubjectId: sortClassField.current.input.value,
                 // @ts-ignore
                 sortedBy: sortedByField.current.input.value,
             })
         }
     };
 
-    const handleChangeFor = (field: "note" | "sortClass" | "sortedBy") => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeFor = (field: "note" | "qSubjectId" | "sortedBy") => (event: React.ChangeEvent<HTMLInputElement>) => {
         var newMeta = {
             ...sortSelectionContext.sortMetaData,
         } as SortMetaData;
@@ -48,7 +48,7 @@ export function SortMetaDataSelector(props: {}) {
                 <Grid item xs={12} md={4}>
                     <TextField id="sort-class-field" ref={sortClassField} label="Sort Class"
                                variant="outlined"
-                               onChange={handleChangeFor("sortClass")} value={sortSelectionContext.sortMetaData.sortClass}/>
+                               onChange={handleChangeFor("qSubjectId")} value={sortSelectionContext.sortMetaData.qSubjectId}/>
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <TextField id="note-field" ref={noteField} label="Note" variant="outlined"

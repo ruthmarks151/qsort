@@ -3,6 +3,8 @@ import {databaseRef} from "../firebase";
 import firebase from "firebase";
 import {Map, Record} from 'immutable'
 
+type QuerySnapshot = firebase.firestore.QuerySnapshot;
+type DocumentData = firebase.firestore.DocumentData;
 type DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 type DocumentReference = firebase.firestore.DocumentReference;
 
@@ -22,7 +24,8 @@ export interface SortObj {
     result: SortMapping,
     statementPositions: { [key: string]: number },
     qSetId: string,
-    sortClass: string,
+    qSubjectId: string,
+    //sortClass: string,
     sortedBy: string,
     sortedOn: any,
     user: string
@@ -36,10 +39,11 @@ export class qSort extends Record({
     result: undefined as unknown as SortMapping, // The result of the sort
     // sortTypeId: undefined  as unknown as string, // ID of the SortType
     qSetId: undefined as unknown as string, // ID of the SortType
+    qSubjectId: undefined as unknown as string, // ID of the qSubject
     sortClass: undefined as unknown as string, // A description of the sort class
     sortedBy: undefined as unknown as string | undefined, // The sorter
-    sortedOn: undefined as unknown as any, // The date of the sort
-    user: undefined as unknown as DocumentReference,
+    sortedOn: undefined as unknown as firebase.firestore.Timestamp,
+    user: undefined as unknown as string,
     statementPositions: undefined as unknown as { [key: string]: number }
 }, "Sort") {
 
@@ -63,6 +67,8 @@ export class qSort extends Record({
             if (data === undefined) return null;
             const params: { [key: string]: any } = data;
             params.id = doc.id;
+            if(!data.qSet) console.log(doc.id);
+            params.qSubjectId = data.qSubject.id;
             params.qSetId = data.qSet.id;
             const sort = new qSort(params);
             await databaseRef.collection("qSets").doc(sort.qSetId).get()
@@ -109,7 +115,7 @@ export class qSort extends Record({
 
     asArrays(): StatementId[][] {
         const shape = this.qSet.distribution;
-        return shape.reduce((arr, _, i) => [...arr, this.group(i as PileId)], [] as StatementString[][]);
+        return shape.reduce((arr, _, i) => [...arr, this.group(i as PileId)], [] as StatementId[][]);
     }
 
     asRankMap(): { [key: string]: Rank; } {
@@ -143,27 +149,32 @@ export function asStatementPositions(qSet: QSet, result: StatementString[][]) {
 }
 
 
-export function listenForSortsByType(sortTypeId: string, onUpdate: (_: qSort[]) => void): () => void {
+export function allSortsForUser(onUpdate: (_: qSort[]) => void): () => void {
     return (databaseRef.collection("qSorts")
         .where("user", "==", firebase.auth().currentUser?.uid)
-        .where("qSet", "==", qSetRef(sortTypeId))
-        .onSnapshot(async function (querySnapshot) {
-            var sorts: Promise<qSort | null>[] = [];
-            await querySnapshot.forEach(async function (doc) {
+        .orderBy("sortedOn")
+        .onSnapshot(callWithAll<qSort>(qSort.fromDocumentSnapshot, onUpdate)))
+}
 
-                const sort = qSort.fromDocumentSnapshot(doc);
-                sorts.push(sort)
+function callWithAll<T>(fromDocumentSnapshot: (_:DocumentSnapshot) => Promise<T | null>, onUpdate: (_: T[]) => void) {
+    return async function (querySnapshot: QuerySnapshot) {
+        var sorts: Promise<T | null>[] = [];
+        await querySnapshot.forEach(async function (doc) {
+            const sort = fromDocumentSnapshot(doc);
+            sorts.push(sort)
+        });
+        Promise.all(sorts).then(results => {
+            onUpdate(results.filter(s => s !== null) as T[])
+        }).catch((r) => console.error(r))
+    };
+}
 
-                // const sort = await qSort.fromDocumentSnapshot(doc);
-                // console.log(sort)
-                // if (sort != null)
-                //     sorts.push(sort);
-            });
-            Promise.all(sorts).then(results => {
-                console.log("Ended");
-                onUpdate(results.filter(s => s !== null) as qSort[])
-            })
-        }));
+export function listenForSortsByQSet(qSetId: string, onUpdate: (_: qSort[]) => void): () => void {
+    return (databaseRef.collection("qSorts")
+        .where("user", "==", firebase.auth().currentUser?.uid)
+        .where("qSet", "==", qSetRef(qSetId))
+        .orderBy("sortedOn")
+        .onSnapshot(callWithAll<qSort>(qSort.fromDocumentSnapshot, onUpdate)));
 }
 
 export function getSort(id: string, storeFunction: (_: qSort | null) => void): void {

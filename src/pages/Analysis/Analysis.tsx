@@ -17,7 +17,7 @@ import {Factors} from "./Factors";
 export type Rank = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4
 
 function correlation(sort1: qSort, sort2: qSort): number {
-    const keys = Object.keys(sort1.qSet.statements)
+    const keys = Object.keys(sort1.qSet.statements);
     const rank1 = sort1.asRankMap();
     const rank2 = sort2.asRankMap();
 
@@ -53,7 +53,7 @@ export default function Analysis(p: {} ){
     return (
 
                 <React.Fragment>
-                    {/* Chart */}
+                    {/* CongruenceChart */}
                     <Grid item xs={12} md={6}>
                         <Paper className={classes.paper} style={{height: "100%", textAlign: "center", placeContent: "center"}}>
                             <Typography component="h2" variant="h2">

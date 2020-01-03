@@ -10,7 +10,7 @@ import {blankSortMetaData, SortMetaData} from "../../types/SortMetadata";
 import {Paper} from "@material-ui/core";
 import {NavbarContext, useStyles} from "../DashboardBody/NavbarContainer";
 import Grid from "@material-ui/core/Grid";
-import firebase from "src/firebase";
+import firebase from "firebase";
 
 function sortBody(sortType: QSet | null, primarySort: qSort | null, likertResults: StatementString[][] | null, bucketResults: StatementString[][] | null, sortSelectionContext: ISortSelectionContext, updatePrimarySort: (sort: (qSort | null)) => void, setBucketResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, setLikertResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, comparisonSort: qSort | null) {
     if (sortType != null) {

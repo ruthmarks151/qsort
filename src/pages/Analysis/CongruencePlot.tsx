@@ -6,7 +6,7 @@ import {PileId, qSort} from "../../types/QSort";
 
 export default function CongruencePlot(props: {primarySort: qSort, comparisonSort: qSort}) {
 
-    const inventory: StatementString[] = Object.values(props.primarySort.qSet.statements).map(s => s.statement);
+    const inventory: StatementString[] = Object.keys(props.primarySort.qSet.statements);
 
     //props.set2.reverse()
     const primaryRank = props.primarySort.asRankMap();
@@ -20,7 +20,7 @@ export default function CongruencePlot(props: {primarySort: qSort, comparisonSor
         mode: 'markers' as "markers" | "lines+markers",
         type: "scatter" as "scatter" | "bar",
         name: 'Statements',
-        text: inventory as string[],
+        text: inventory.map((s) => props.primarySort.qSet.statements[s].statement) as string[],
         marker: {size: 12}
     };
 

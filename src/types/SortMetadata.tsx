@@ -1,11 +1,11 @@
 export const blankSortMetaData = () => ({
     note: "",
-    sortClass: "",
+    qSubjectId: "",
     sortedBy: "",
 } as SortMetaData);
 
 export interface SortMetaData {
     note: string;
-    sortClass: string;
+    qSubjectId: string;
     sortedBy: string;
 }
