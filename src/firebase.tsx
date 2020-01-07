@@ -1,10 +1,4 @@
 import * as firebase from 'firebase';
-import {PileId, pileIds, qSort} from "./types/QSort";
-import {StatementString} from "./types/QSet";
-import {copySortTypesToQSets} from "./db_scripts/copySortTypesToQSets";
-import {augmentSortsWithUser} from "./db_scripts/augmentSortsWithUser";
-import {mapResultsToStatementPositions} from "./db_scripts/mapResultsToStatementPositions";
-import augmentSortsWithQSubject from "./db_scripts/augmentSortsWithQSubject";
 type DocumentReference = firebase.firestore.DocumentReference;
 
 const firebaseConfig = {
@@ -23,10 +17,6 @@ firebase.initializeApp(firebaseConfig);
 
 const databaseRef = firebase.firestore();
 const Timestamp = firebase.firestore.Timestamp;
-// mapResultsToStatementPositions()
-// augmentSortsWithUser();
-// copySortTypesToQSets();
-// augmentSortsWithQSubject()
 // databaseRef.collection("sorts").get().then((querySnapshot) => {
 //     querySnapshot.forEach(function (doc) {
 //         const result = doc.data().result as { [key: string]: StatementString[]};

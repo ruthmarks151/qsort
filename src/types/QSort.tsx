@@ -119,9 +119,10 @@ export class qSort extends Record({
     }
 
     asRankMap(): { [key: string]: Rank; } {
+        const distribution = this.qSet.distribution;
         return this.asArrays().reduce(function (obj, traits, index) {
             traits.reduce((obj, trait) => {
-                obj[trait] = index - 4;
+                obj[trait] = index - Math.ceil(distribution.length / 2);
                 return obj
             }, obj);
             return obj;

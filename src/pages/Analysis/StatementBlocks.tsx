@@ -40,18 +40,18 @@ export default function StatementBlocks({primarySort, comparisonSort}:{primarySo
     };
 
     const blockStyle = {flexBasis: "30%", margin: "8px auto auto auto"};
-
+    const significantMove = Math.floor(primarySort.qSet.distribution.length / 3);
     return <React.Fragment>
         <Grid item xs={12} md={6} lg={4}>
             <Paper className={classes.paper} style={{height: "100%"}}>
-                <Title>Significant Movers (3 or More Groupings)</Title>
+                <Title>Significant Movers ({significantMove} or More Groupings)</Title>
                 <ul style={{
                     margin: 'auto',
                     textAlign: 'left',
                     listStyleType: "none"
                 }}>
                     {movingTerms
-                        .filter(s => Math.abs(comparisonRank[s] - primaryRank[s]) >= 3)
+                        .filter(s => Math.abs(comparisonRank[s] - primaryRank[s]) >= significantMove)
                         .map(s => <Typography component="li"><b>{differenceString(s)}</b> {primarySort.qSet.statements[s].statement}</Typography>)}
                 </ul>
             </Paper>
