@@ -7,7 +7,7 @@ import Congruences from "./Congruences";
 import SortTable from "./SortTable";
 import Box from "@material-ui/core/Box";
 import React from "react";
-import {NavbarContext, useStyles} from "./NavbarContainer";
+import {NavbarContext, useStyles} from "../../components/NavbarContainer";
 import {allSortsForUser, listenForSortsByQSet, qSort} from "../../types/QSort";
 
 export function DashboardBody(props: {}) {

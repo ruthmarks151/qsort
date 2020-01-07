@@ -3,16 +3,18 @@ import firebase, {auth} from "firebase";
 import {StyledFirebaseAuth} from 'react-firebaseui';
 
 import './App.css';
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
+import {Route, Link, BrowserRouter as Router} from 'react-router-dom'
 import SortSelects from './components/SortSelects'
 import * as firebaseui from "firebaseui";
-import NavbarContainer, {useStyles} from "./pages/DashboardBody/NavbarContainer";
+import NavbarContainer, {useStyles} from "./components/NavbarContainer";
 import {DashboardBody} from "./pages/DashboardBody/DashboardBody";
 import Analysis from "./pages/Analysis/Analysis";
 import {DoSort} from "./pages/DoSort/DoSort";
 import {SortSelectionContext} from "./components/SortSelectionContext";
 import SignInSide from "./SignInSide";
 import {CircularProgress} from "@material-ui/core";
+import GettingStarted from "./pages/GettingStarted/GettingStarted";
+import Loading from "./components/Loading";
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -22,7 +24,9 @@ const uiConfig = {
     // signInSuccessUrl: '/signedIn',
     callbacks: {
         // Avoid redirects after sign-in.
-        signInSuccessWithAuthResult: (x: any) => { return false}
+        signInSuccessWithAuthResult: (x: any) => {
+            return false
+        }
     },
 
     // We will display Google and Facebook as auth providers.
@@ -30,34 +34,36 @@ const uiConfig = {
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     ]
 };
-function LoginSwitcher(props: {loggedIn: JSX.Element, loggedOut: JSX.Element}) {
+
+function LoginSwitcher(props: { loggedIn: JSX.Element, loggedOut: JSX.Element }) {
     const [user, setUser] = React.useState<firebase.User | null>(null);
     const [waiting, setWaiting] = React.useState<boolean>(true);
     React.useEffect(() => {
-        firebase.auth().onAuthStateChanged((u) => {setUser(u); setWaiting(false);});
+        firebase.auth().onAuthStateChanged((u) => {
+            setUser(u);
+            setWaiting(false);
+        });
 
     }, []);
 
-    if (waiting){
-        return <div style={{textAlign: "center", marginTop:"50vh", height: "100vh"}}>
-            <CircularProgress style={{height: 80, width: 80}}/>
-        </div>
-    }else if (user == null){
+    if (waiting) {
+        return <Loading/>
+    } else if (user == null) {
         return props.loggedOut
-    }else {
+    } else {
         return props.loggedIn
     }
 
 }
+
 function App(): JSX.Element {
     const sideStyle = {alignSelf: "flex-end", margin: "auto", flexGrow: 1, flexBasis: 0};
     const classes = useStyles();
     return (
-        <LoginSwitcher
-            loggedIn={
-                <Router>
-                    <NavbarContainer>
-
+        <Router>
+            <NavbarContainer>
+                <LoginSwitcher
+                    loggedIn={<React.Fragment>
                         <Route path={["/dashboard", "/"]} exact>
                             <DashboardBody/>
                         </Route>
@@ -71,11 +77,18 @@ function App(): JSX.Element {
                                 <Analysis/>
                             </SortSelects>
                         </Route>
-                    </NavbarContainer>
-                </Router>
+                    </React.Fragment>
 
-            }
-            loggedOut={ <SignInSide uiConfig={uiConfig}/>/*
+                    }
+                    loggedOut={<React.Fragment>
+                        <Route path="/login">
+                            <SignInSide uiConfig={uiConfig}/>
+                        </Route>
+                        <Route path={["/:step", "/"]}>
+                            <GettingStarted/>
+                        </Route>
+                    </React.Fragment>/*
+
                 <div className="App">
                     <header className="App-header">
                 <span style={sideStyle}>
@@ -88,6 +101,8 @@ function App(): JSX.Element {
                     </header>
                 </div>
             */}/>
+            </NavbarContainer>
+        </Router>
     );
 }
 

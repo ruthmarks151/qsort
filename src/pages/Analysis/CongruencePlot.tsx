@@ -84,12 +84,12 @@ export default function CongruencePlot(props: { primarySort: qSort, comparisonSo
                     top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
-                <CartesianGrid x={0} y={0}/>
+                <Scatter name="Your Sorts" data={data} fill={theme.palette.primary.main}/>
                 <XAxis type="number" dataKey="x" name="Primary Rank"/>
                 <YAxis type="number" dataKey="y" name="Comparison Rank"/>
                 <ZAxis type="category" dataKey="label" name="Statement"/>
+                <CartesianGrid x={0.01} y={0.01}/>
                 <Tooltip cursor={{strokeDasharray: '3 3'}}/>
-                <Scatter name="Your Sorts" data={data} fill={theme.palette.primary.main}/>
             </ScatterChart>
         </ResponsiveContainer>
     );

@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import {analysisReady, ISortSelectionContext, SortSelectionContext} from "../../components/SortSelectionContext";
-import {NavbarContext, useStyles} from "../DashboardBody/NavbarContainer";
+import {NavbarContext, useStyles} from "../../components/NavbarContainer";
 import StatementBlocks from "./StatementBlocks";
 import CongruencePlot from "./CongruencePlot"
 import {Sankey} from "./Sankey";
@@ -85,14 +85,14 @@ export default function Analysis(p: {} ){
                         </Paper>
                     </Grid>
 
-                    <Grid item xs={12}>
-                        <Paper className={classes.paper}>
-                            <Sankey
-                                primarySort={props.primarySort}
-                                comparisonSort={props.comparisonSort}
-                            />
-                        </Paper>
-                    </Grid>
+                    {/*<Grid item xs={12}>*/}
+                    {/*    <Paper className={classes.paper}>*/}
+                    {/*        <Sankey*/}
+                    {/*            primarySort={props.primarySort}*/}
+                    {/*            comparisonSort={props.comparisonSort}*/}
+                    {/*        />*/}
+                    {/*    </Paper>*/}
+                    {/*</Grid>*/}
                 </React.Fragment>
             );
 

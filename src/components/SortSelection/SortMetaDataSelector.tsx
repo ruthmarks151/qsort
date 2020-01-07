@@ -4,7 +4,7 @@ import {TextField} from "@material-ui/core";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import {useStyles} from "../../pages/DashboardBody/NavbarContainer";
+import {useStyles} from "../NavbarContainer";
 
 export function SortMetaDataSelector(props: {}) {
     const classes = useStyles();

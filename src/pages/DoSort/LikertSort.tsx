@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import {QSet, StatementString} from "../../types/QSet";
 
-const labels: string[] = [
+export const labels: string[] = [
     "Strongly Does Not Describe",
     "Does Not Describe",
     "Somewhat Does Not Describe",

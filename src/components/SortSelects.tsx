@@ -9,7 +9,7 @@ import {SortMetaDataSelector} from "./SortSelection/SortMetaDataSelector";
 import {DoSort} from "../pages/DoSort/DoSort";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import {useStyles} from "../pages/DashboardBody/NavbarContainer";
+import {useStyles} from "./NavbarContainer";
 
 function SortSelects(props: { children: JSX.Element }) {
     const classes = useStyles();

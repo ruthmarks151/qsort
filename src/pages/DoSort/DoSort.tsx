@@ -8,27 +8,25 @@ import BucketTransposition from "./BucketTransposition";
 import LikertSort from "./LikertSort";
 import {blankSortMetaData, SortMetaData} from "../../types/SortMetadata";
 import {Paper} from "@material-ui/core";
-import {NavbarContext, useStyles} from "../DashboardBody/NavbarContainer";
+import {NavbarContext, useStyles} from "../../components/NavbarContainer";
 import Grid from "@material-ui/core/Grid";
 import firebase from "firebase";
 
-function sortBody(sortType: QSet | null, primarySort: qSort | null, likertResults: StatementString[][] | null, bucketResults: StatementString[][] | null, sortSelectionContext: ISortSelectionContext, updatePrimarySort: (sort: (qSort | null)) => void, setBucketResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, setLikertResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void, comparisonSort: qSort | null) {
-    if (sortType != null) {
+function sortBody(sortType: QSet,
+                  primarySort: qSort | null,
+                  likertResults: StatementString[][] | null,
+                  bucketResults: StatementString[][] | null,
+                  sortSelectionContext: ISortSelectionContext,
+                  updatePrimarySort: (sort: (qSort | null)) => void,
+                  setBucketResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void,
+                  setLikertResults: (value: (((prevState: (StatementString[][] | null)) => (StatementString[][] | null)) | StatementString[][] | null)) => void,
+                  comparisonSort: qSort | null,
+                  onComplete: (_:StatementString[][]) => void) {
         if (primarySort == null) {
             if (likertResults != null) {
                 if (bucketResults != null) {
                     return <BucketAnnealer sort={bucketResults} //bucketResults}
-                                           onComplete={(x: StatementString[][]) => {
-                                               console.log(x);
-                                               pushSort({
-                                                   ...sortSelectionContext.sortMetaData,
-                                                   result: asSortMapping(x),
-                                                   statementPositions: asStatementPositions(sortType, x),
-                                                   qSetId: sortType.id,
-                                                   sortedOn: Timestamp.now(),
-                                                   user: firebase.auth().currentUser?.uid || "Anonymous"
-                                               }, updatePrimarySort);
-                                           }}/>;
+                                           onComplete={onComplete}/>;
                 } else {
                     return <BucketTransposition sortType={sortType}
                                                 source={likertResults}
@@ -60,12 +58,13 @@ function sortBody(sortType: QSet | null, primarySort: qSort | null, likertResult
         } else {
             return <h3>Step 4: Select a comparison sort</h3>
         }
-    } else {
-        return <h3>Select a sort type</h3>
-    }
 }
 
-export function DoSort(props: {}) {
+function DefaultNoSort() {
+    return <h3>Select a sort type</h3>
+}
+
+export function DoSort(props: {noSort?: JSX.Element }) {
     const sortSelectionContext = React.useContext<ISortSelectionContext>(SortSelectionContext);
 
     const [likertResults, setLikertResults] = useState<StatementString[][] | null>(null);
@@ -85,7 +84,18 @@ export function DoSort(props: {}) {
 
     return <Grid item xs={12}>
         <Paper className={classes.paper} style={{width: "100%", justifyContent: "center", textAlign: "center"}}>
-            {sortBody(sortType, primarySort, likertResults, bucketResults, sortSelectionContext, updatePrimarySort, setBucketResults, setLikertResults, comparisonSort)}
+
+            { sortType ? sortBody(sortType, primarySort, likertResults, bucketResults, sortSelectionContext, updatePrimarySort, setBucketResults, setLikertResults, comparisonSort, (x: StatementString[][]) => {
+                pushSort({
+                    ...sortSelectionContext.sortMetaData,
+                    result: asSortMapping(x),
+                    statementPositions: asStatementPositions(sortType, x),
+                    qSetId: sortType.id,
+                    sortedOn: Timestamp.now(),
+                    user: firebase.auth().currentUser?.uid || "Anonymous"
+                }, updatePrimarySort);
+            })
+                : (props.noSort || <DefaultNoSort/>)}
         </Paper>
     </Grid>;
 

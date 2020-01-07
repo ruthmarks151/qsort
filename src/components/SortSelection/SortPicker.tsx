@@ -11,7 +11,7 @@ import {getSort, listenForSortsByQSet, qSort} from "../../types/QSort";
 import {ISortSelectionContext, SortSelectionContext} from "../SortSelectionContext";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import {useStyles} from "../../pages/DashboardBody/NavbarContainer";
+import {useStyles} from "../NavbarContainer";
 
 export default function SortPicker(props: {}) {
     const sortSelectionContext = React.useContext<ISortSelectionContext>(SortSelectionContext);

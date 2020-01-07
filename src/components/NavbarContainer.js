@@ -11,10 +11,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import {mainListItems, secondaryListItems} from './listItems';
+import {mainListItems, secondaryListItems} from '../pages/DashboardBody/listItems';
 import Box from "@material-ui/core/Box";
 import {makeStyles} from "@material-ui/core/styles";
-import {ISortSelectionContext} from "../../components/SortSelectionContext";
+import {ISortSelectionContext} from "./SortSelectionContext";
 
 
 function Copyright() {
@@ -120,7 +120,7 @@ export const NavbarContext = React.createContext({
 // : {children: JSX.element}
 export default function NavbarContainer(props) {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const [title, setTitle] = React.useState("Loading");
 
     const handleDrawerOpen = () => {

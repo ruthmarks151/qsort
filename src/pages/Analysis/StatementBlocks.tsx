@@ -7,7 +7,7 @@ import {Rank} from "../../pages/Analysis/Analysis";
 import {StatementString} from "../../types/QSet";
 import {qSort, StatementId} from "../../types/QSort";
 import {inventory} from "../../inventory";
-import {useStyles} from "../DashboardBody/NavbarContainer";
+import {useStyles} from "../../components/NavbarContainer";
 
 
 
